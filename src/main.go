@@ -8,6 +8,7 @@ import (
 	"text/template"
 	"fmt"
 	"path/filepath"
+	"github.com/DemoLiang/wss/golib"
 )
 
 var (
@@ -21,7 +22,7 @@ func defaultAssetPath() string {
 	if err != nil {
 		return "."
 	}
-	fmt.Printf("%v\n",p.Dir)
+	golib.Log("%v\n",p.Dir)
 	return p.Dir
 }
 
@@ -30,16 +31,13 @@ func homeHandler(c http.ResponseWriter, req *http.Request) {
 }
 
 func benchmarkHandler(c http.ResponseWriter, req *http.Request) {
-	h.broadcast <- []byte("test message")
+	h.Broadcast <- []byte("test message")
 }
 
 func main() {
 	flag.Parse()
-	homeTempl = template.Must(template.ParseFiles(filepath.Join(*assets, "index.html")))
-	//homeTempl = template.Must(template.ParseFiles( "index.html"))
 	fmt.Printf("homeTempl:%v\n",filepath.Join(*assets, "index.html"))
 	go h.run()
-	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/ws", WsHandler)
 	http.HandleFunc("/benchmark", benchmarkHandler)
 	if err := http.ListenAndServe(*addr, nil); err != nil {
