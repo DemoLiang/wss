@@ -36,7 +36,9 @@ func benchmarkHandler(c http.ResponseWriter, req *http.Request) {
 
 func main() {
 	flag.Parse()
-	fmt.Printf("homeTempl:%v\n",filepath.Join(*assets, "index.html"))
+	golib.Log("homeTempl:%v\n",filepath.Join(*assets, "index.html"))
+
+	//启动注册函数
 	go h.run()
 	http.HandleFunc("/ws", WsHandler)
 	http.HandleFunc("/benchmark", benchmarkHandler)
