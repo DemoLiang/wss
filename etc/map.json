@@ -1,0 +1,22 @@
+
+{
+  "map":[
+    {
+      "map_element": {
+        "x": 0,
+        "y":1,
+        "descript":"起点",
+        "level":0,
+        "fee":0,
+       "rent_fee": 0,
+        "enable":true,
+        "role":0
+      }
+    },
+    {
+      "map_element":{
+        "x":1
+      }
+    }
+  ]
+}

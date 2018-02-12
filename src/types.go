@@ -107,11 +107,13 @@ type MapElement struct {
 	Fee       int    `json:"fee"`        //购买基础费用
 	RentFee   int    `json:"rent_fee"`   //收费租金
 	Status    int    `json:"enable"`     //标记是否可用，已购买，空地，已被抵押
-	Role      int    `json:"role"`       //标记是client地图元素，还是地图模块，还是运气牌模块
+	Role      int    `json:"role"`       //标记是client地图元素，还是地图模块，还是运气牌模块,起点
 }
 type GameMap struct {
-	Client map[*Connection][]MapElement
-	Map    []MapElement
+	//每个client用户拥有的地产
+	ClientMap map[*Connection][]MapElement `json:"client_map"`
+	//所有的地图元素
+	Map    []MapElement `json:"map"`
 }
 
 //基础信息
