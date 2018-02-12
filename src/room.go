@@ -79,7 +79,7 @@ func (r *GameRoom) NewsCard() (cardNo int) {
 }
 
 func (r *GameRoom)InitGameMap(){
-
+	r.Map.Map = InitialGameMap.Map
 }
 
 func GetGameRoomById(id string) (gameRoom *GameRoom) {
@@ -92,8 +92,16 @@ func (r *GameRoom) run() {
 		case c := <-r.Register:
 			r.Connections[c] = true
 			r.Money[c] = INITIAL_MONEY
+			//初始拥有地产为0
+			r.Map.ClientMap[c] = []MapElement{}
+			//初始重置在起点
+			r.Map.ClientMap[c][0] = r.Map.Map[0]
 		case c := <-r.Unregister:
 			if _, ok := r.Connections[c]; ok {
+				r.Connections[c] = false
+				//FIXME 回收地产
+				//FIXME 重置为起点
+				//FIXME 回收钱
 				delete(r.Connections, c)
 				close(c.Send)
 			}

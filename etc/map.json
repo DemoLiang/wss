@@ -2,21 +2,46 @@
 {
   "map":[
     {
-      "map_element": {
-        "x": 0,
-        "y":1,
+
+        "location_x": 0,
+        "location_y":0,
         "descript":"起点",
         "level":0,
         "fee":0,
        "rent_fee": 0,
-        "enable":true,
+        "enable":1,
         "role":0
-      }
+
     },
     {
-      "map_element":{
-        "x":1
-      }
+        "location_x":1,
+        "location_y":2,
+        "descript":"青岛",
+        "level":0,
+        "fee":1200,
+        "rent_fee": 200,
+        "enable":1,
+        "role":1
+    },
+    {
+        "location_x":0,
+        "location_y":2,
+        "descript":"南京",
+        "level":0,
+        "fee":1200,
+        "rent_fee": 200,
+        "enable":1,
+        "role":1
+    },
+    {
+        "location_x":0,
+        "location_y":3,
+        "descript":"监狱",
+        "level":0,
+        "fee":0,
+        "rent_fee": 0,
+        "enable":1,
+        "role":3
     }
   ]
 }
