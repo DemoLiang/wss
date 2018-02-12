@@ -6,6 +6,8 @@ var h = Hub{
 	Broadcast:   make(chan []byte),
 	Register:    make(chan *Connection),
 	Unregister:  make(chan *Connection),
+	//JoinGameRoom :make(chan *Connection),
+	//GameRooms : make(map[*GameRoom]bool),
 	Connections: make(map[*Connection]bool),
 }
 

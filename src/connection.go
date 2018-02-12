@@ -17,9 +17,9 @@ func (c *Connection) ReaderHandler() {
 		}
 		golib.Log("len:%v\n",len(h.Connections))
 
-
+		c.HandlerMessage(message)
 		//解析消息，此链接已经在游戏大厅，
-		// TODO 如果链接是创建，则新建房间
+		// TODO 如果消息是创建，则新建房间
 		// TODO 如果是加入房间，则处理加入房间消息
 		// TODO 如果是游戏消息，则处理游戏时间，交互游戏厅消息
 
@@ -34,7 +34,7 @@ func (c *Connection) WriterHandler() {
 	for message := range c.Send {
 		err := c.Ws.WriteMessage(websocket.TextMessage, message)
 		if err != nil {
-			fmt.Println(err)
+			golib.Log(err.Error())
 			break
 		}
 	}
@@ -69,3 +69,4 @@ func (c *Connection)Close()  {
 	c.Ws.Close()
 	h.Unregister <- c
 }
+

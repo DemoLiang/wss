@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"text/template"
-	"fmt"
 	"path/filepath"
 	"github.com/DemoLiang/wss/golib"
 )
@@ -40,6 +39,8 @@ func main() {
 
 	//启动注册函数
 	go h.run()
+
+	//启动WS处理函数
 	http.HandleFunc("/ws", WsHandler)
 	http.HandleFunc("/benchmark", benchmarkHandler)
 	if err := http.ListenAndServe(*addr, nil); err != nil {
