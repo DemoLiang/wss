@@ -44,6 +44,9 @@ func (c *Connection)HandlerMessage(data []byte)  {
 		data,_:=json.Marshal(&shakeDice)
 		//广播给房间其它的小伙伴
 		gameRoom.Broadcast <- data
+
+		//掷完骰子后，就自动移动
+		gameRoom.GameUserMove(dice)
 	case MESSAGE_TYPE__LUCK_CARD:
 		var luckCard MessageGameLuckCard
 		gameRoom := GetGameRoomById(luckCard.GameRoomId)
@@ -60,7 +63,7 @@ func (c *Connection)HandlerMessage(data []byte)  {
 		data,_:=json.Marshal(&newsCard)
 		//广播给房间其它的小伙伴
 		gameRoom.Broadcast <- data
-	case MESSAGE_TYPE_GAME_USER_MOVE:
+	case MESSAGE_TYPE__GAME_USER_MOVE:
 
 	default:
 		golib.Log("default unknown message")

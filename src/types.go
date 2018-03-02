@@ -117,3 +117,4 @@ type MessageGameNewsCard struct {
 	GameRoomId string `json:"game_room_id"` //房间ID号
 	NewsCardNo int    `json:"luck_card_no"` //新闻卡号
 }
+
