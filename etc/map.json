@@ -2,46 +2,404 @@
 {
   "map":[
     {
-
         "location_x": 0,
         "location_y":0,
         "descript":"起点",
         "level":0,
         "fee":0,
-       "rent_fee": 0,
-        "enable":1,
-        "role":0
-
-    },
-    {
-        "location_x":1,
-        "location_y":2,
-        "descript":"青岛",
-        "level":0,
-        "fee":1200,
-        "rent_fee": 200,
-        "enable":1,
-        "role":1
-    },
-    {
-        "location_x":0,
-        "location_y":2,
-        "descript":"南京",
-        "level":0,
-        "fee":1200,
-        "rent_fee": 200,
-        "enable":1,
-        "role":1
-    },
-    {
-        "location_x":0,
-        "location_y":3,
-        "descript":"监狱",
-        "level":0,
-        "fee":0,
         "rent_fee": 0,
         "enable":1,
-        "role":3
+        "role":0
+    },
+    {
+      "location_x": 0,
+      "location_y": 1,
+      "descript":"沈阳",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 0,
+      "location_y":2,
+      "descript":"天津",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 0,
+      "location_y":3,
+      "descript":"投资项目1",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 1,
+      "location_y": 3,
+      "descript":"北京",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 2,
+      "location_y": 3,
+      "descript":"新闻",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 2,
+      "location_y": 4,
+      "descript":"大连",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 2,
+      "location_y": 5,
+      "descript":"贵阳",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 2,
+      "location_y": 6,
+      "descript":"投资项目2",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 1,
+      "location_y": 6,
+      "descript":"长沙",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 0,
+      "location_y": 6,
+      "descript":"入狱",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 0,
+      "location_y": 7,
+      "descript":"银川",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 0,
+      "location_y": 8,
+      "descript":"兰州",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 0,
+      "location_y": 9,
+      "descript":"投资项目3",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 1,
+      "location_y": 9,
+      "descript":"拉萨",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 2,
+      "location_y": 9,
+      "descript":"运气",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 3,
+      "location_y": 9,
+      "descript":"杭州",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 4,
+      "location_y": 9,
+      "descript":"投资项目4",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 5,
+      "location_y": 9,
+      "descript":"南京",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 6,
+      "location_y": 9,
+      "descript":"苏州",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 7,
+      "location_y": 9,
+      "descript":"证券",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 7,
+      "location_y": 8,
+      "descript":"厦门",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 7,
+      "location_y": 7,
+      "descript":"台北",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 7,
+      "location_y": 6,
+      "descript":"监狱",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 6,
+      "location_y": 6,
+      "descript":"投资项目5",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 5,
+      "location_y": 6,
+      "descript":"新闻",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 5,
+      "location_y": 5,
+      "descript":"重庆",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 5,
+      "location_y": 4,
+      "descript":"成都",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 5,
+      "location_y": 3,
+      "descript":"公园",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 6,
+      "location_y": 3,
+      "descript":"深圳",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 7,
+      "location_y": 3,
+      "descript":"投资项目6",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 7,
+      "location_y": 2,
+      "descript":"广州",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 7,
+      "location_y": 1,
+      "descript":"三亚",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 7,
+      "location_y": 0,
+      "descript":"投资项目7",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 6,
+      "location_y": 0,
+      "descript":"香港",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 5,
+      "location_y": 0,
+      "descript":"运气",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 4,
+      "location_y": 0,
+      "descript":"澳门",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 3,
+      "location_y": 0,
+      "descript":"税务",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 2,
+      "location_y": 0,
+      "descript":"上海",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
+    },
+    {
+      "location_x": 1,
+      "location_y": 0,
+      "descript":"钓鱼岛",
+      "level":0,
+      "fee":1300,
+      "rent_fee": 0,
+      "enable":1,
+      "role":0
     }
   ]
 }
