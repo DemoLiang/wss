@@ -46,7 +46,7 @@ func (c *Connection)HandlerMessage(data []byte)  {
 		gameRoom.Broadcast <- data
 
 		//掷完骰子后，就自动移动
-		gameRoom.GameUserMove(dice)
+		c.GameUserMove(dice,gameRoom)
 	case MESSAGE_TYPE__LUCK_CARD:
 		var luckCard MessageGameLuckCard
 		gameRoom := GetGameRoomById(luckCard.GameRoomId)

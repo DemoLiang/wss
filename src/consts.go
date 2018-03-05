@@ -10,6 +10,8 @@ const(
 	MESSAGE_TYPE__GAME_USER_MOVE
 	MESSAGE_TYPE__LUCK_CARD
 	MESSAGE_TYPE__NEWS_CARD
+	MESSAGE_TYPE__PAY_RENT_FEE
+	MESSAGE_TYPE__LAND_UPDATE
 )
 
 
@@ -35,6 +37,13 @@ const (
 )
 
 const (
+	//初始化游戏，每个用户的钱
 	INITIAL_MONEY = 15000
+	//初始化游戏，银行的钱
 	INITIAL_BANK_MONEY = 50000000
+	//初始化游戏，每次过起点，送给用户的钱
+	BANK_SEND_MONY = 3000
+	//判断游戏结束的钱，当个人用户的钱达到50000时就算用户赢了
+	GAME_DOEN_MONY = 50000
 )
+

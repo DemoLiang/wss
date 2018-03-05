@@ -1,5 +1,10 @@
 package main
 
+import (
+	"encoding/json"
+	"sync"
+)
+
 var GameRooms map[string]*GameRoom
 
 func NewGameRoom(number int) (gameRoom *GameRoom) {
@@ -78,12 +83,97 @@ func (r *GameRoom) NewsCard() (cardNo int) {
 	return cardNo
 }
 
-func (r *GameRoom)InitGameMap(){
+//初始化地图
+func (r *GameRoom) InitGameMap() {
 	r.Map.Map = InitialGameMap.Map
 }
 
+//根据游戏房间ID号，获取游戏房间信息
 func GetGameRoomById(id string) (gameRoom *GameRoom) {
 	return GameRooms[id]
+}
+
+//银行给用户派送钱
+func (room *GameRoom) BankSendMony(c *Connection, mony int64) (err error) {
+	var lock sync.Mutex
+	lock.Lock()
+	defer lock.Unlock()
+	//银行支出
+	room.Bank = room.Bank - mony
+	//用户增加钱
+	room.Money[c] = room.Money[c] + mony
+
+	return nil
+}
+
+//用户掷完骰子后，检查需要做的动作，比如：付租金，买地，升级地产，抵押地产来付租金，
+func (room *GameRoom) GameDoing(c *Connection) (err error) {
+	var confirmData []byte
+	for con, data := range room.Map.ClientMap {
+		for index, mapData := range data {
+			//过路/自己的地，需要支付租金/升级地产
+			if room.Map.CurrentUserLocation[c].IsEqual(Pos{mapData.LocationX, mapData.LocationY}) {
+				if con == c {
+					//TODO 自己的地，确认是否升级地产
+					var land MessageUserLandUpdate
+					land.Land = room.Map.ClientMap[con][index]
+					land.UpdateFee = land.Land.Fee + int64((land.Land.Level)*0.2 + land.Land.Level)*land.Land.Fee
+					land.GameRoomId = room.Id
+					land.MessageType = MESSAGE_TYPE__LAND_UPDATE
+					confirmData,_ = json.Marshal(land)
+
+				}else {
+					//TODO 路过别人的地，需要支付租金
+					room.Money[c] = room.Money[c] - room.Map.ClientMap[con][index].RentFee
+					room.Money[con] = room.Money[con] + room.Map.ClientMap[con][index].RentFee
+					var land MessageUserPayRenFee
+					land.RentFee = room.Map.ClientMap[con][index].RentFee
+					land.GameRoomId = room.Id
+					land.Land = room.Map.ClientMap[con][index]
+					land.MessageType = MESSAGE_TYPE__PAY_RENT_FEE
+
+					confirmData,_ = json.Marshal(land)
+				}
+			}
+			//空地，发送消息是否买地
+			var land MessageUserBuyLand
+			confirmData, _= json.Marshal(land)
+			//
+		}
+	}
+
+	//发送消息，确认是否操作
+	c.Send <- confirmData
+
+	return nil
+}
+
+//判断游戏是否结束
+func (r *GameRoom) CheckGameDone() (done bool, err error) {
+	var count int = 0
+	for _, data := range r.Money {
+		if data >= GAME_DOEN_MONY {
+			return true, nil
+		}
+		//FIXME 还需要判断用户是否还有地产，如果地产，则说明其还可以进行抵押
+		if data <= 0 {
+			count++
+		}
+		//已经是最后的一个用户
+		if count >= len(r.Connections)-1 {
+			return true, nil
+		}
+	}
+
+	return false, nil
+}
+
+func (this Pos) IsEqual(pos Pos) bool {
+	if this.LocationX == pos.LocationX && this.LocationY == pos.LocationY {
+		return true
+	} else {
+		return false
+	}
 }
 
 func (r *GameRoom) run() {
