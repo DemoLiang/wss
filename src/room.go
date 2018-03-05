@@ -137,6 +137,10 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 			}
 			//空地，发送消息是否买地
 			var land MessageUserBuyLand
+			land.Land = room.Map.ClientMap[con][index]
+			land.GameRoomId = room.Id
+			land.MessageType = MESSAGE_TYPE__BUY_LAND
+
 			confirmData, _= json.Marshal(land)
 			//
 		}
@@ -146,6 +150,29 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 	c.Send <- confirmData
 
 	return nil
+}
+
+
+//用户地产抵押
+func (room *GameRoom) LandImpawn(c *Connection) (err error) {
+	
+	
+	return nil
+}
+
+//用户地产赎回
+func (room *GameRoom) LandRedeem(c *Connection,mapList []MapElement)  {
+	for idx,data := range mapList{
+		if room.Map.ClientMap[c][idx].IsEqual(data){
+			//判断地产是否是同一个地产，如果是同一个地产，则把地产赎回，并根据地产计算费用
+			//支付费用
+			room.Money[c] = room.Money[c] - room.Map.ClientMap[c][idx].Fee
+			//把地产变为可用
+			room.Map.ClientMap[c][idx].Status = 1
+		}
+	}
+
+	return
 }
 
 //判断游戏是否结束
@@ -168,13 +195,23 @@ func (r *GameRoom) CheckGameDone() (done bool, err error) {
 	return false, nil
 }
 
+//判断一个点是否跟自己属于同一个点
 func (this Pos) IsEqual(pos Pos) bool {
 	if this.LocationX == pos.LocationX && this.LocationY == pos.LocationY {
 		return true
-	} else {
-		return false
 	}
+
+	return false
 }
+
+//判断一个地图元素是否跟自己是同一个地图元素
+func (m MapElement)IsEqual(m1 MapElement) bool{
+	if m.LocationX == m1.LocationX && m.LocationY == m1.LocationY{
+		return true
+	}
+	return false
+}
+
 
 func (r *GameRoom) run() {
 	for {
