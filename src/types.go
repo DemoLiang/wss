@@ -97,7 +97,7 @@ type GameMap struct {
 //基础信息
 type MessageBasicInfo struct {
 	MessageType MESSAGE_TYPE_ENUM `json:"message_type"` //消息类型
-	GameRoomId string `json:"game_room_id"` //房间ID号
+	GameRoomId  string            `json:"game_room_id"` //房间ID号
 }
 
 //创建房间
@@ -167,4 +167,20 @@ type MessageUserLandUpdate struct {
 	UpdateFee  int64      `json:"update_fee"`
 	GameRoomId string     `json:"game_room_id"`
 	Land       MapElement `json:"land"`
+}
+
+//用户地产赎回消息
+type MessageUserLandRedeem struct {
+	MessageBasicInfo
+	GameUserid string       `json:"game_userid"`
+	GameRoomId string       `json:"game_room_id"`
+	LandList   []MapElement `json:"land"`
+}
+
+//用户抵偿抵押消息
+type MessageUserLandImpawn struct {
+	MessageBasicInfo
+	GameUserid string       `json:"game_userid"`
+	GameRoomId string       `json:"game_room_id"`
+	LandList   []MapElement `json:"land"`
 }

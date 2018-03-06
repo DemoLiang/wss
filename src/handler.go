@@ -49,6 +49,7 @@ func (c *Connection)HandlerMessage(data []byte)  {
 		c.GameUserMove(dice,gameRoom)
 	case MESSAGE_TYPE__LUCK_CARD:
 		var luckCard MessageGameLuckCard
+		json.Unmarshal(data,&luckCard)
 		gameRoom := GetGameRoomById(luckCard.GameRoomId)
 		luckCardNo := gameRoom.LuckCard()
 		luckCard.LuckCardNo = luckCardNo
@@ -57,6 +58,7 @@ func (c *Connection)HandlerMessage(data []byte)  {
 		gameRoom.Broadcast <- data
 	case MESSAGE_TYPE__NEWS_CARD:
 		var newsCard MessageGameNewsCard
+		json.Unmarshal(data,&newsCard)
 		gameRoom := GetGameRoomById(newsCard.GameRoomId)
 		newsCardNo := gameRoom.NewsCard()
 		newsCard.NewsCardNo = newsCardNo
@@ -64,6 +66,23 @@ func (c *Connection)HandlerMessage(data []byte)  {
 		//广播给房间其它的小伙伴
 		gameRoom.Broadcast <- data
 	case MESSAGE_TYPE__GAME_USER_MOVE:
+		//
+	case MESSAGE_TYPE__LAND_IMPAWN:
+		var landImpawn MessageUserLandImpawn
+		json.Unmarshal(data,&landImpawn)
+		gameRoom := GetGameRoomById(landImpawn.GameRoomId)
+		gameRoom.LandImpawn(c,landImpawn.LandList)
+
+		//广播给房间的其它小伙伴，其进行了地产抵押
+		gameRoom.Broadcast <- data
+	case MESSAGE_TYPE__LAND_REDEEM:
+		var landRedeem MessageUserLandRedeem
+		json.Unmarshal(data,&landRedeem)
+		gameRoom := GetGameRoomById(landRedeem.GameRoomId)
+		gameRoom.LandRedeem(c,landRedeem.LandList)
+
+		//广播给房间的其它小伙伴，其进行了地产赎回
+		gameRoom.Broadcast <- data
 
 	default:
 		golib.Log("default unknown message")

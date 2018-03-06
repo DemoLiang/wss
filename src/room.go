@@ -154,8 +154,16 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 
 
 //用户地产抵押
-func (room *GameRoom) LandImpawn(c *Connection) (err error) {
-	
+func (room *GameRoom) LandImpawn(c *Connection,mapList []MapElement) (err error) {
+	for idx,data := range mapList{
+		if room.Map.ClientMap[c][idx].IsEqual(data){
+			//判断地产是否是同一个地产，如果是同一个地产，则把地产赎回，并根据地产计算费用
+			//支付费用
+			room.Money[c] = room.Money[c] + room.Map.ClientMap[c][idx].Fee
+			//把地产变为可用
+			room.Map.ClientMap[c][idx].Status = 0
+		}
+	}
 	
 	return nil
 }
