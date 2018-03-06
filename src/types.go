@@ -7,6 +7,9 @@ type Connection struct {
 	// The web socket connection
 	Ws *websocket.Conn
 
+	// wechat openid
+	OpenId string
+
 	// Buffered channel of outbound messages.
 	Send chan []byte
 }
