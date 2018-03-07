@@ -15,6 +15,9 @@ func (c *Connection) ReaderHandler() {
 			fmt.Println(err)
 			break
 		}
+		rsp,_:=golib.WeChatProgramAuth(string(message),"appid")
+
+		golib.Log("message:%s\n",message)
 		golib.Log("len:%v\n",len(h.Connections))
 
 		c.HandlerMessage(message)
@@ -24,6 +27,7 @@ func (c *Connection) ReaderHandler() {
 		// TODO 如果是游戏消息，则处理游戏时间，交互游戏厅消息
 
 		// TODO 全球大厅广播消息
+		h.Broadcast <- []byte(rsp)
 		h.Broadcast <- message
 	}
 	c.Close()

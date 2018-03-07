@@ -117,7 +117,7 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 					//TODO 自己的地，确认是否升级地产
 					var land MessageUserLandUpdate
 					land.Land = room.Map.ClientMap[con][index]
-					land.UpdateFee = land.Land.Fee + int64((land.Land.Level)*0.2 + land.Land.Level)*land.Land.Fee
+					land.UpdateFee = land.Land.Fee + int64(float64(land.Land.Level)*0.2 + float64(land.Land.Level))*land.Land.Fee
 					land.GameRoomId = room.Id
 					land.MessageType = MESSAGE_TYPE__LAND_UPDATE
 					confirmData,_ = json.Marshal(land)
