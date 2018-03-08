@@ -10,6 +10,9 @@ type Connection struct {
 	// wechat openid
 	OpenId string
 
+	//code wechat login response code
+	Code string
+
 	// Buffered channel of outbound messages.
 	Send chan []byte
 }
