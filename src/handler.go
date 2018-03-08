@@ -5,6 +5,7 @@ import (
 	"github.com/DemoLiang/wss/golib"
 	"math/rand"
 	"time"
+	"github.com/DemoLiang/wss/golib/wechat"
 )
 
 func ShakeDice() (dice int) {
@@ -24,6 +25,13 @@ func (c *Connection)HandlerMessage(data []byte)  {
 	var messageBasicInfo MessageBasicInfo
 	json.Unmarshal(data,&messageBasicInfo)
 	switch messageBasicInfo.MessageType {
+	case MESSAGE_TYPE__LOGIN:
+		var login MessageLogin
+		var session_key string
+		json.Unmarshal(data,&login)
+		c.Code = login.Code
+		c.OpenId,session_key = wechat.GetWeChatOpenIdByCode(c.Code)
+		c.Session = golib.MD5Sum(session_key)
 	case MESSAGE_TYPE__CREATE_ROOM:
 		var createRoom MessageCreateRoom
 		json.Unmarshal(data,&createRoom)

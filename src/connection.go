@@ -5,6 +5,7 @@ import (
 	"github.com/gorilla/websocket"
 	"net/http"
 	"github.com/DemoLiang/wss/golib"
+	"github.com/DemoLiang/wss/golib/wechat"
 )
 
 // reader pumps messages from the websocket connection to the hub.
@@ -15,7 +16,7 @@ func (c *Connection) ReaderHandler() {
 			fmt.Println(err)
 			break
 		}
-		golib.WeChatProgramAuth(string(message),"appid")
+		wechat.WeChatProgramUserInfoReq(string(message),wechat.SECRET)
 
 		golib.Log("message:%s\n",message)
 		golib.Log("len:%v\n",len(h.Connections))
