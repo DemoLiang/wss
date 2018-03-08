@@ -5,9 +5,8 @@ $(document).ready(function () {
     socket = new WebSocket('ws://127.0.0.1:7777/ws');
     // Message received on the socket
     socket.onmessage = function (event) {
-        var data = JSON.parse(event.data);
-        console.log(data);
-        $("#chatbox li").first().before("<li>"+ data.errcode + "</li>");
+        console.log(event.data);
+        $("#chatbox li").first().before("<li>"+ event.data.toLocaleString() + "</li>");
     };
 
     // Send messages.
