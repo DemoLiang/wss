@@ -17,5 +17,25 @@
 }
 
 .usermotto {
-  margin-top: 200px;
+  margin-top: 10rpx;
+  width: 128rpx;
+}
+.formcontrol{
+  margin-top: 20px;
+}
+.form-control{
+  width: 128rpx;
+  height: 128rpx;
+  border-style: solid; 
+  border-top-width: 1px;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  color: #ff0000
+}
+.btsend{
+  margin-top: 5px;
+}
+.container{
+  margin-top: 5px;
 }

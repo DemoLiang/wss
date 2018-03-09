@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/DemoLiang/wss/golib"
-	"github.com/DemoLiang/wss/golib/wechat"
 	"github.com/gorilla/websocket"
 	"net/http"
 )
@@ -16,10 +15,7 @@ func (c *Connection) ReaderHandler() {
 			fmt.Println(err)
 			break
 		}
-		wechat.WeChatProgramUserInfoReq(string(message), wechat.SECRET)
-
-		golib.Log("message:%s\n", message)
-		golib.Log("len:%v\n", len(h.Connections))
+		golib.Log("message:%s len(connections):%v\n", message, len(h.Connections))
 
 		c.HandlerMessage(message)
 		//解析消息，此链接已经在游戏大厅，

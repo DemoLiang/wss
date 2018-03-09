@@ -92,6 +92,6 @@ func (c *Connection) HandlerMessage(data []byte) {
 		gameRoom.Broadcast <- data
 
 	default:
-		golib.Log("default unknown message")
+		//golib.Log("default unknown message")
 	}
 }

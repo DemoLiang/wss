@@ -7,6 +7,7 @@ Page({
     motto: 'Hello World',
     userInfo: {},
     hasUserInfo: false,
+    code: '',
     canIUse: wx.canIUse('button.open-type.getUserInfo')
   },
   //事件处理函数
@@ -14,7 +15,7 @@ Page({
     wx.connectSocket({
       url: 'ws://127.0.0.1:7777/ws',
       method:"GET",
-      success:res =>{
+      success:res => {
         console.log("aaaaaaaaaaaa")
       }
     })
@@ -24,6 +25,7 @@ Page({
         success: function (res) {
           if (res.code) {
             //发起网络请求
+            app.globalData.code = res.code
             wx.sendSocketMessage({
               data:  res.code
             })
@@ -78,17 +80,27 @@ Page({
       userInfo: e.detail.userInfo,
       hasUserInfo: true
     })
-    wxRequest
+    // wxRequest
   },
-  wxRequest:function(e){
-    wx.request({
-    url: "127.0.0.1:7777/ws",
-    data: "aaaaaaaa",
-    method: "POST",
-    dataType: "json",
-    success:res =>{
-        console.log('aaaaaaaaaa')
-      }
+  // wxRequest:function(e){
+  //   wx.request({
+  //   url: "127.0.0.1:7777/ws",
+  //   data: "aaaaaaaa",
+  //   method: "POST",
+  //   dataType: "json",
+  //   success:res =>{
+  //       console.log('aaaaaaaaaa')
+  //     }
+  //   })
+  // }
+  bindFormSubmit: function (e) {
+    console.log(e.detail.value.textarea)
+    wx.sendSocketMessage({
+      data: e.detail.value.textarea + app.globalData.code,
+      // code:dataContent.code
+      success: function (res) { },
+      fail: function (res) { },
+      complete: function (res) { },
     })
-  }
+  },
 })

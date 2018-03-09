@@ -12,10 +12,23 @@
     <text class="user-motto">{{motto}}</text>
   </view>
   <view>
-    <input id="sendbox" type="text"></input>
-        <button id="sendbtn" type="button" class="btn btn-default">发送</button>
-<div class="container">
-    <ul id="chatbox">
+  <!-- <div>
+  <view class="formcontrol">
+    <textarea id="sendbox" type="text" class="form-control" style="height:200px;width:200px;word-break:break-all"></textarea>
+  </view>
+  <view class="btsend">
+    <button bindtap="sendWsData" id="sendbtn" type="button" class="btn btn-default">发送
+  </button>
+  </view>
+  </div> -->
+  <view class="section">
+  <form bindsubmit="bindFormSubmit">
+    <textarea placeholder="json data" class="form-control" name="textarea" style="height:200px;width:200px;word-break:break-all"/>
+    <button form-type="submit"> 提交 </button>
+  </form>
+</view>
+<div class="container1">
+    <ul id="chatbox1">
         <li>start</li>
     </ul>
 </div>
