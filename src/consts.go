@@ -2,7 +2,7 @@ package main
 
 type MESSAGE_TYPE_ENUM int
 
-const(
+const (
 	_ MESSAGE_TYPE_ENUM = iota
 	MESSAGE_TYPE__LOGIN
 	MESSAGE_TYPE__CREATE_ROOM
@@ -18,17 +18,14 @@ const(
 	MESSAGE_TYPE__LAND_REDEEM
 )
 
-
-
 type LUCK_CARD_TYPE_ENUM int
 
 const (
-	LUCK_CARD_TYPE__MIN LUCK_CARD_TYPE_ENUM  = iota
+	LUCK_CARD_TYPE__MIN LUCK_CARD_TYPE_ENUM = iota
 	LUCK_CARD_TYPE__NO1
 	LUCK_CARD_TYPE__NO2
 	LUCK_CARD_TYPE__MAX
 )
-
 
 type NEWS_CARD_TYPE_ENUM int
 
@@ -36,7 +33,7 @@ const (
 	NEWS_CARD_TYPE__MIN NEWS_CARD_TYPE_ENUM = iota
 	NEWS_CARD_TYPE__NO1
 	_
-	NEWS_CARD_TYPE__NO2=3+iota
+	NEWS_CARD_TYPE__NO2 = 3 + iota
 	NEWS_CARD_TYPE__MAX
 )
 
@@ -50,4 +47,3 @@ const (
 	//判断游戏结束的钱，当个人用户的钱达到50000时就算用户赢了
 	GAME_DOEN_MONY = 50000
 )
-

@@ -1,18 +1,18 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
+	"github.com/DemoLiang/wss/golib"
+	"io/ioutil"
 	"log"
 	"net/http"
-	"github.com/DemoLiang/wss/golib"
 	"os"
-	"io/ioutil"
-	"encoding/json"
 )
 
 var (
 	InitialGameMap GameMap
-	addr      = flag.String("addr", ":7777", "http service address")
+	addr           = flag.String("addr", ":7777", "http service address")
 )
 
 func main() {
@@ -25,22 +25,22 @@ func main() {
 
 	cfg, err := os.Open(*cfgFile)
 	if err != nil {
-		golib.Log("err:%v",err)
+		golib.Log("err:%v", err)
 		return
 	}
 	defer cfg.Close()
 
 	bs, err := ioutil.ReadAll(cfg)
 	if err != nil {
-		golib.Log("err:%v",err)
+		golib.Log("err:%v", err)
 		return
 	}
-	err = json.Unmarshal(bs,&InitialGameMap)
-	if err!= nil{
-		golib.Log("err:%v",err)
+	err = json.Unmarshal(bs, &InitialGameMap)
+	if err != nil {
+		golib.Log("err:%v", err)
 		return
 	}
-	golib.Log("InitialGameMap:%v\n",InitialGameMap)
+	golib.Log("InitialGameMap:%v\n", InitialGameMap)
 
 	//启动注册函数
 	go h.run()

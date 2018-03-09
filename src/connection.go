@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/gorilla/websocket"
-	"net/http"
 	"github.com/DemoLiang/wss/golib"
 	"github.com/DemoLiang/wss/golib/wechat"
+	"github.com/gorilla/websocket"
+	"net/http"
 )
 
 // reader pumps messages from the websocket connection to the hub.
@@ -16,10 +16,10 @@ func (c *Connection) ReaderHandler() {
 			fmt.Println(err)
 			break
 		}
-		wechat.WeChatProgramUserInfoReq(string(message),wechat.SECRET)
+		wechat.WeChatProgramUserInfoReq(string(message), wechat.SECRET)
 
-		golib.Log("message:%s\n",message)
-		golib.Log("len:%v\n",len(h.Connections))
+		golib.Log("message:%s\n", message)
+		golib.Log("len:%v\n", len(h.Connections))
 
 		c.HandlerMessage(message)
 		//解析消息，此链接已经在游戏大厅，
@@ -57,7 +57,6 @@ func ConnHandler(c *Connection) {
 	go c.ReaderHandler()
 }
 
-
 // wsHandler handles websocket requests from the peer.
 func WsHandler(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
@@ -70,8 +69,7 @@ func WsHandler(w http.ResponseWriter, r *http.Request) {
 	ConnHandler(c)
 }
 
-func (c *Connection)Close()  {
+func (c *Connection) Close() {
 	c.Ws.Close()
 	h.Unregister <- c
 }
-

@@ -117,12 +117,12 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 					//TODO 自己的地，确认是否升级地产
 					var land MessageUserLandUpdate
 					land.Land = room.Map.ClientMap[con][index]
-					land.UpdateFee = land.Land.Fee + int64(float64(land.Land.Level)*0.2 + float64(land.Land.Level))*land.Land.Fee
+					land.UpdateFee = land.Land.Fee + int64(float64(land.Land.Level)*0.2+float64(land.Land.Level))*land.Land.Fee
 					land.GameRoomId = room.Id
 					land.MessageType = MESSAGE_TYPE__LAND_UPDATE
-					confirmData,_ = json.Marshal(land)
+					confirmData, _ = json.Marshal(land)
 
-				}else {
+				} else {
 					//TODO 路过别人的地，需要支付租金
 					room.Money[c] = room.Money[c] - room.Map.ClientMap[con][index].RentFee
 					room.Money[con] = room.Money[con] + room.Map.ClientMap[con][index].RentFee
@@ -132,7 +132,7 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 					land.Land = room.Map.ClientMap[con][index]
 					land.MessageType = MESSAGE_TYPE__PAY_RENT_FEE
 
-					confirmData,_ = json.Marshal(land)
+					confirmData, _ = json.Marshal(land)
 				}
 			}
 			//空地，发送消息是否买地
@@ -141,7 +141,7 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 			land.GameRoomId = room.Id
 			land.MessageType = MESSAGE_TYPE__BUY_LAND
 
-			confirmData, _= json.Marshal(land)
+			confirmData, _ = json.Marshal(land)
 			//
 		}
 	}
@@ -152,11 +152,10 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 	return nil
 }
 
-
 //用户地产抵押
-func (room *GameRoom) LandImpawn(c *Connection,mapList []MapElement) (err error) {
-	for idx,data := range mapList{
-		if room.Map.ClientMap[c][idx].IsEqual(data){
+func (room *GameRoom) LandImpawn(c *Connection, mapList []MapElement) (err error) {
+	for idx, data := range mapList {
+		if room.Map.ClientMap[c][idx].IsEqual(data) {
 			//判断地产是否是同一个地产，如果是同一个地产，则把地产赎回，并根据地产计算费用
 			//支付费用
 			room.Money[c] = room.Money[c] + room.Map.ClientMap[c][idx].Fee
@@ -164,14 +163,14 @@ func (room *GameRoom) LandImpawn(c *Connection,mapList []MapElement) (err error)
 			room.Map.ClientMap[c][idx].Status = 0
 		}
 	}
-	
+
 	return nil
 }
 
 //用户地产赎回
-func (room *GameRoom) LandRedeem(c *Connection,mapList []MapElement)  {
-	for idx,data := range mapList{
-		if room.Map.ClientMap[c][idx].IsEqual(data){
+func (room *GameRoom) LandRedeem(c *Connection, mapList []MapElement) {
+	for idx, data := range mapList {
+		if room.Map.ClientMap[c][idx].IsEqual(data) {
 			//判断地产是否是同一个地产，如果是同一个地产，则把地产赎回，并根据地产计算费用
 			//支付费用
 			room.Money[c] = room.Money[c] - room.Map.ClientMap[c][idx].Fee
@@ -213,13 +212,12 @@ func (this Pos) IsEqual(pos Pos) bool {
 }
 
 //判断一个地图元素是否跟自己是同一个地图元素
-func (m MapElement)IsEqual(m1 MapElement) bool{
-	if m.LocationX == m1.LocationX && m.LocationY == m1.LocationY{
+func (m MapElement) IsEqual(m1 MapElement) bool {
+	if m.LocationX == m1.LocationX && m.LocationY == m1.LocationY {
 		return true
 	}
 	return false
 }
-
 
 func (r *GameRoom) run() {
 	for {

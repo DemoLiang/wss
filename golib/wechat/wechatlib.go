@@ -1,23 +1,23 @@
 package wechat
 
 import (
-	"fmt"
-	"net/url"
-	"net/http"
 	"bytes"
-	"io/ioutil"
 	"encoding/json"
+	"fmt"
 	"github.com/DemoLiang/wss/golib"
+	"io/ioutil"
+	"net/http"
+	"net/url"
 )
 
-const(
+const (
 	WECHAT_HOST = "https://api.weixin.qq.com"
-	APPID = ""
-	SECRET = ""
+	APPID       = "wxb451d970d83674d0"
+	SECRET      = "ec9d8780978119c0f52ca4a04fb5bd69"
 )
 
-const(
-	_ int =iota
+const (
+	_ int = iota
 	WeChatProgramUserInfoReqPath
 )
 
@@ -25,13 +25,12 @@ var WeChatProgramReqPath = map[int]string{
 	WeChatProgramUserInfoReqPath: "/sns/jscode2session",
 }
 
-
-func WeChatProgramUserInfoReq(code,appid string) (rsp []byte, err error) {
+func WeChatProgramUserInfoReq(code, appid string) (rsp []byte, err error) {
 	headData := url.Values{}
 	headData.Set("appid", appid)
-	headData.Set("secret",SECRET)
-	headData.Set("js_code",code)
-	headData.Set("grant_type","authorization_code")
+	headData.Set("secret", SECRET)
+	headData.Set("js_code", code)
+	headData.Set("grant_type", "authorization_code")
 
 	u, _ := url.ParseRequestURI(WECHAT_HOST)
 	u.Path = WeChatProgramReqPath[WeChatProgramUserInfoReqPath]
@@ -58,13 +57,13 @@ func WeChatProgramUserInfoReq(code,appid string) (rsp []byte, err error) {
 	return result, nil
 }
 
-func GetWeChatOpenIdByCode(code string) (openid ,session_key string) {
-	rsp,err := WeChatProgramUserInfoReq(code,APPID)
-	if err != nil{
-		return "",""
+func GetWeChatOpenIdByCode(code string) (openid, session_key string) {
+	rsp, err := WeChatProgramUserInfoReq(code, APPID)
+	if err != nil {
+		return "", ""
 	}
 	var weChatUserInforsp WeChatUserInfoRsp
-	json.Unmarshal([]byte(rsp),&weChatUserInforsp)
+	json.Unmarshal([]byte(rsp), &weChatUserInforsp)
 
-	return weChatUserInforsp.Openid,weChatUserInforsp.Session_key
+	return weChatUserInforsp.Openid, weChatUserInforsp.Session_key
 }
