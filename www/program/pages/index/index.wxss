@@ -24,8 +24,8 @@
   margin-top: 20px;
 }
 .form-control{
-  width: 128rpx;
-  height: 128rpx;
+  /* width: 128rpx;
+  height: 128rpx; */
   border-style: solid; 
   border-top-width: 1px;
   border-right-width: 1px;
@@ -38,4 +38,21 @@
 }
 .container{
   margin-top: 5px;
+}
+.message_type{
+  margin: left;
+  border-style: solid; 
+  border-top-width: 1px;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  color: #ff0000
+}
+.roomid{
+  border-style: solid; 
+  border-top-width: 1px;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  color: #ff0000
 }

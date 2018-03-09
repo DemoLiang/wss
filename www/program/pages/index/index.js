@@ -41,9 +41,9 @@ Page({
         console.log('收到服务器内容：' + res.data)
       })
     })
-    wx.navigateTo({
-      url: '../logs/logs'
-    })
+    // wx.navigateTo({
+    //   url: '../logs/logs'
+    // })
   },
   onLoad: function () {
     if (app.globalData.userInfo) {

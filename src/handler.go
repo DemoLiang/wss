@@ -23,8 +23,12 @@ func RandNumber() (number int) {
 func (c *Connection) HandlerMessage(data []byte) {
 	var messageBasicInfo MessageBasicInfo
 	json.Unmarshal(data, &messageBasicInfo)
+	if c.Session == "" {
+		c.Send <- []byte("请先登录")
+	}
+
 	switch messageBasicInfo.MessageType {
-	case MESSAGE_TYPE__LOGIN:
+	case MESSAGE_TYPE__LOGIN_SERVER:
 		var login MessageLogin
 		var session_key string
 		json.Unmarshal(data, &login)

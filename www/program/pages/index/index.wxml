@@ -23,7 +23,13 @@
   </div> -->
   <view class="section">
   <form bindsubmit="bindFormSubmit">
-    <textarea placeholder="json data" class="form-control" name="textarea" style="height:200px;width:200px;word-break:break-all"/>
+    <label style='margin: left;display:flex; '>message_type:
+      <input type='text' class='message_type' name='message_type'></input>
+    </label>
+    <label style='display:flex;'>roomid:
+      <input type='text' class='roomid' name='roomid'></input>
+    </label>
+    <textarea placeholder="json data" class="form-control" name="textarea" style="height:100px;width:300px;"/>
     <button form-type="submit"> 提交 </button>
   </form>
 </view>
