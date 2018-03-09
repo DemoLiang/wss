@@ -31,6 +31,7 @@ func (c *Connection) HandlerMessage(data []byte) {
 		c.Code = login.Code
 		c.OpenId, session_key = wechat.GetWeChatOpenIdByCode(c.Code)
 		c.Session = golib.MD5Sum(session_key)
+		golib.Log("c.Code:%v c.Openid:%v c.Session:%v\n", c.Code, c.OpenId, c.Session)
 	case MESSAGE_TYPE__CREATE_ROOM:
 		var createRoom MessageCreateRoom
 		json.Unmarshal(data, &createRoom)

@@ -96,7 +96,12 @@ Page({
   bindFormSubmit: function (e) {
     console.log(e.detail.value.textarea)
     wx.sendSocketMessage({
-      data: e.detail.value.textarea + app.globalData.code,
+      data: JSON.stringify({
+        message_type:1,
+         content :e.detail.value.textarea,
+         code: app.globalData.code
+         }
+        ),
       // code:dataContent.code
       success: function (res) { },
       fail: function (res) { },
