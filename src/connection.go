@@ -25,7 +25,7 @@ func (c *Connection) ReaderHandler() {
 
 		// TODO 全球大厅广播消息
 		//h.Broadcast <- []byte(rsp)
-		h.Broadcast <- message
+		//h.Broadcast <- message
 	}
 	c.Close()
 }

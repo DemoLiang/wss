@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"sync"
+	"github.com/segmentio/ksuid"
 )
 
 var GameRooms map[string]*GameRoom
@@ -18,6 +19,8 @@ func NewGameRoom(number int) (gameRoom *GameRoom) {
 		MaxClientNumber: number,
 		Bank:            INITIAL_BANK_MONEY,
 	}
+	//初始化roomid
+	gameRoom.Id = newID()
 	//启动房间注册函数
 	go gameRoom.run()
 	//初始化运气池
@@ -217,6 +220,10 @@ func (m MapElement) IsEqual(m1 MapElement) bool {
 		return true
 	}
 	return false
+}
+
+func newID() string {
+	return ksuid.New().String()
 }
 
 func (r *GameRoom) run() {

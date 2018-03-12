@@ -23,7 +23,7 @@ func RandNumber() (number int) {
 func (c *Connection) HandlerMessage(data []byte) {
 	var messageBasicInfo MessageBasicInfo
 	json.Unmarshal(data, &messageBasicInfo)
-	if c.Session == "" {
+	if c.Session == "" && messageBasicInfo.MessageType != MESSAGE_TYPE__LOGIN_SERVER{
 		c.Send <- []byte("请先登录")
 	}
 
@@ -42,11 +42,15 @@ func (c *Connection) HandlerMessage(data []byte) {
 		gameRoom := NewGameRoom(createRoom.Number)
 		gameRoom.Register <- c
 		GameRooms[gameRoom.Id] = gameRoom
+		data,_:=json.Marshal(createRoom)
+		c.Send <- data
 	case MESSAGE_TYPE__JOIN_ROOM:
 		var joinRoom MessageJoinRoom
 		json.Unmarshal(data, &joinRoom)
 		gameRoom := GetGameRoomById(joinRoom.GameRoomId)
 		gameRoom.Register <- c
+		data,_:=json.Marshal(joinRoom)
+		c.Send<-data
 	case MESSAGE_TYPE__SHAKE_DICE:
 		var shakeDice MessageGameShakeDice
 		json.Unmarshal(data, &shakeDice)
