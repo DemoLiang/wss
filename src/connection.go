@@ -17,7 +17,11 @@ func (c *Connection) ReaderHandler() {
 		}
 		golib.Log("message:%s len(connections):%v\n", message, len(h.Connections))
 
-		c.HandlerMessage(message)
+		err = c.HandlerMessage(message)
+		if err != nil {
+			golib.Log("发送信息错误，关闭连接")
+			break
+		}
 		//解析消息，此链接已经在游戏大厅，
 		// TODO 如果消息是创建，则新建房间
 		// TODO 如果是加入房间，则处理加入房间消息

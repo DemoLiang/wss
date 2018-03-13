@@ -20,41 +20,77 @@ func RandNumber() (number int) {
 	return
 }
 
-func (c *Connection) HandlerMessage(data []byte) {
+func (c *Connection) HandlerMessage(data []byte) (err error) {
 	var messageBasicInfo MessageBasicInfo
 	json.Unmarshal(data, &messageBasicInfo)
-	if c.Session == "" && messageBasicInfo.MessageType != MESSAGE_TYPE__LOGIN_SERVER{
+	if c.Session == "" && messageBasicInfo.MessageType != MESSAGE_TYPE__LOGIN_SERVER {
 		c.Send <- []byte("请先登录")
+		return golib.EInternalError
 	}
 
 	switch messageBasicInfo.MessageType {
 	case MESSAGE_TYPE__LOGIN_SERVER:
 		var login MessageLogin
-		var session_key string
+		var openid, session_key string
 		json.Unmarshal(data, &login)
-		c.Code = login.Code
-		c.OpenId, session_key = wechat.GetWeChatOpenIdByCode(c.Code)
-		c.Session = golib.MD5Sum(session_key)
+		openid, session_key = wechat.GetWeChatOpenIdByCode(c.Code)
+		if openid == "" || session_key == "" {
+			return golib.EInternalError
+		}
+		c.ClientInfo = ClientInfo{
+			Code:   login.Code,
+			OpenId: openid,
+		}
+		c.ClientInfo.Session = golib.MD5Sum(session_key)
+
+		h.Register <- c
 		golib.Log("c.Code:%v c.Openid:%v c.Session:%v\n", c.Code, c.OpenId, c.Session)
 	case MESSAGE_TYPE__CREATE_ROOM:
 		var createRoom MessageCreateRoom
 		json.Unmarshal(data, &createRoom)
+		//新建房间
 		gameRoom := NewGameRoom(createRoom.Number)
+		//向房间注册用户
 		gameRoom.Register <- c
-		GameRooms[gameRoom.Id] = gameRoom
-		data,_:=json.Marshal(createRoom)
+		//向游戏大厅注册房间
+		h.RegisterRoom <- gameRoom
+		//返回游戏房间信息给前端
+		data, _ := json.Marshal(createRoom)
 		c.Send <- data
 	case MESSAGE_TYPE__JOIN_ROOM:
 		var joinRoom MessageJoinRoom
 		json.Unmarshal(data, &joinRoom)
+		//获取房间
 		gameRoom := GetGameRoomById(joinRoom.GameRoomId)
+		//向房间注册用户
 		gameRoom.Register <- c
-		data,_:=json.Marshal(joinRoom)
-		c.Send<-data
+		//返回前端房间信息,客户端信息
+		joinRoom.ClientInfoList = GetGameRoomClientInfo(joinRoom.GameRoomId)
+		data, _ := json.Marshal(joinRoom)
+		c.Send <- data
+		//广播消息到房间所有的用户
+		gameRoom.Broadcast <- data
+	case MESSAGE_TYPE__GAME_START:
+		var gameStart MessageGameStart
+		json.Unmarshal(data, &gameStart)
+		//获取房间
+		gameRoom := GetGameRoomById(gameStart.GameRoomId)
+
+		//把房间变为不可用，游戏开始
+		gameRoom.RoomStatus = GAMEROOM_STATUS__GAMESTART
+
+		//返回前端房间信息,客户端信息
+		gameStart.ClientInfoList = GetGameRoomClientInfo(gameStart.GameRoomId)
+		data, _ := json.Marshal(gameStart)
+		c.Send <- data
+		//广播消息到房间的所有用户
+		gameRoom.Broadcast <- data
 	case MESSAGE_TYPE__SHAKE_DICE:
 		var shakeDice MessageGameShakeDice
 		json.Unmarshal(data, &shakeDice)
+		//获取房间信息
 		gameRoom := GetGameRoomById(shakeDice.GameRoomId)
+		//摇动骰子
 		dice := ShakeDice()
 		shakeDice.DiceNumber = dice
 		data, _ := json.Marshal(&shakeDice)
@@ -62,7 +98,7 @@ func (c *Connection) HandlerMessage(data []byte) {
 		gameRoom.Broadcast <- data
 
 		//掷完骰子后，就自动移动
-		c.GameUserMove(dice, gameRoom)
+		gameRoom.GameUserMove(dice, c)
 	case MESSAGE_TYPE__LUCK_CARD:
 		var luckCard MessageGameLuckCard
 		json.Unmarshal(data, &luckCard)
@@ -103,4 +139,5 @@ func (c *Connection) HandlerMessage(data []byte) {
 	default:
 		//golib.Log("default unknown message")
 	}
+	return nil
 }

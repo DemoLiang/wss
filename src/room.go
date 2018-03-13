@@ -2,11 +2,12 @@ package main
 
 import (
 	"encoding/json"
-	"sync"
+	"errors"
 	"github.com/segmentio/ksuid"
+	"sync"
 )
 
-var GameRooms map[string]*GameRoom
+//var GameRooms map[string]*GameRoom
 
 func NewGameRoom(number int) (gameRoom *GameRoom) {
 	gameRoom = &GameRoom{
@@ -29,6 +30,8 @@ func NewGameRoom(number int) (gameRoom *GameRoom) {
 	gameRoom.InitNewsCardMap()
 	//初始化地图
 	gameRoom.InitGameMap()
+
+	gameRoom.RoomStatus = GAMEROOM_STATUS__ENABLE
 	return
 }
 
@@ -93,7 +96,57 @@ func (r *GameRoom) InitGameMap() {
 
 //根据游戏房间ID号，获取游戏房间信息
 func GetGameRoomById(id string) (gameRoom *GameRoom) {
-	return GameRooms[id]
+	return h.GameRooms[id]
+}
+
+//根据游戏房间ID号，获取游戏房间用户的基础信息 FIXME ： 需要删除session信息
+func GetGameRoomClientInfo(id string) (ClientInfoList []ClientInfo) {
+	for c, _ := range h.GameRooms[id].Connections {
+		ClientInfoList = append(ClientInfoList, c.ClientInfo)
+	}
+	return ClientInfoList
+}
+
+//房间内的游戏用户移动其摇到的骰子的距离
+func (room *GameRoom) GameUserMove(dice int, c *Connection) (err error) {
+	var dstDice int = dice
+	var ok bool
+	var pos Pos
+	if pos, ok = room.Map.CurrentUserLocation[c]; ok {
+		idx, _, err := c.GetMapLocation(pos, room)
+		if err != nil {
+			return errors.New("move error")
+		}
+		mapLen := len(room.Map.CurrentUserLocation)
+		//如果已经是再次经过，则跳过起点
+		if idx+dice >= mapLen+1 {
+			dstDice = dice + 1
+
+			//如果已经再过起点，则再给用户一部分钱
+			room.BankSendMony(c, BANK_SEND_MONY)
+		}
+		//获取移动距离后的点的坐标
+		mapPos := room.Map.Map[idx+dstDice]
+
+		//更新坐标位置
+		pos.LocationX = mapPos.LocationX
+		pos.LocationY = mapPos.LocationY
+	}
+	//广播移动位置
+	var userMove MessageGameUserMove
+	userMove.MessageType = MESSAGE_TYPE__GAME_USER_MOVE
+	userMove.MoveStep = dice
+	userMove.MovePos = pos
+	userMove.GameRoomId = room.Id
+	data, _ := json.Marshal(userMove)
+	room.Broadcast <- data
+
+	//TODO 移动到的位置，判断是否收租金，是否买地，是否不够钱需要抵押房产
+	room.GameDoing(c)
+
+	//判断输赢
+	room.CheckGameDone()
+	return nil
 }
 
 //银行给用户派送钱
@@ -230,12 +283,12 @@ func (r *GameRoom) run() {
 	for {
 		select {
 		case c := <-r.Register:
+			//用户连接变为可用
 			r.Connections[c] = true
+			//初始化钱
 			r.Money[c] = INITIAL_MONEY
-			//初始拥有地产为0
-			r.Map.ClientMap[c] = []MapElement{}
-			//初始重置在起点
-			r.Map.ClientMap[c][0] = r.Map.Map[0]
+			//初始化位置到起点
+			r.Map.CurrentUserLocation[c] = Pos{LocationX: r.Map.Map[0].LocationX, LocationY: r.Map.Map[0].LocationY}
 		case c := <-r.Unregister:
 			if _, ok := r.Connections[c]; ok {
 				r.Connections[c] = false

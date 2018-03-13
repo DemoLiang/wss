@@ -1,11 +1,12 @@
 package main
 
 var h = Hub{
-	Broadcast:  make(chan []byte),
-	Register:   make(chan *Connection),
-	Unregister: make(chan *Connection),
+	Broadcast:    make(chan []byte),
+	Register:     make(chan *Connection),
+	Unregister:   make(chan *Connection),
+	RegisterRoom: make(chan *GameRoom),
 	//JoinGameRoom :make(chan *Connection),
-	//GameRooms : make(map[*GameRoom]bool),
+	GameRooms:   make(map[string]*GameRoom),
 	Connections: make(map[*Connection]bool),
 }
 
@@ -28,6 +29,8 @@ func (h *Hub) run() {
 					close(c.Send)
 				}
 			}
+		case room := <-h.RegisterRoom:
+			h.GameRooms[room.Id] = room
 		}
 	}
 }

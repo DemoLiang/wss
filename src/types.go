@@ -7,17 +7,19 @@ type Connection struct {
 	// The web socket connection
 	Ws *websocket.Conn
 
-	// wechat openid
-	OpenId string
-
-	//code wechat login response code
-	Code string
-
-	//session
-	Session string
+	//// wechat openid
+	//OpenId string
+	//
+	////code wechat login response code
+	//Code string
+	//
+	////session
+	//Session string
 
 	// Buffered channel of outbound messages.
 	Send chan []byte
+
+	ClientInfo
 }
 
 // hub maintains the set of active clients and broadcasts messages to the clients.
@@ -36,7 +38,11 @@ type Hub struct {
 	//clients join to the game room
 	//JoinGameRoom chan *Connection
 
-	//GameRooms map[*GameRoom]bool
+	//注册游戏房间到游戏大厅
+	RegisterRoom chan *GameRoom
+
+	//房间列表
+	GameRooms map[string]*GameRoom
 }
 
 type GameRoom struct {
@@ -71,6 +77,9 @@ type GameRoom struct {
 
 	//银行
 	Bank int64
+
+	//房间状态，用于判断房间是否可用，游戏中的不可用，销毁的不可用，创建的时候可用
+	RoomStatus GAMEROOM_STATUS_ENUM
 }
 
 type MapElement struct {
@@ -100,6 +109,17 @@ type GameMap struct {
 	Map []MapElement `json:"map"`
 }
 
+type ClientInfo struct {
+	// wechat openid
+	OpenId string
+
+	//code wechat login response code
+	Code string
+
+	//session
+	Session string
+}
+
 //基础信息
 type MessageBasicInfo struct {
 	MessageType MESSAGE_TYPE_ENUM `json:"message_type"` //消息类型
@@ -115,7 +135,14 @@ type MessageCreateRoom struct {
 //加入房间
 type MessageJoinRoom struct {
 	MessageBasicInfo
-	GameRoomId string `json:"game_room_id"` //房间ID号
+	GameRoomId     string       `json:"game_room_id"` //房间ID号
+	ClientInfoList []ClientInfo `json:"client_info_list"`
+}
+
+type MessageGameStart struct {
+	MessageBasicInfo
+	GameRoomId     string       `json:"game_room_id"` //房间ID号
+	ClientInfoList []ClientInfo `json:"client_info_list"`
 }
 
 //请求摇骰子
