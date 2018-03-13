@@ -2,6 +2,8 @@ package main
 
 import (
 	"errors"
+	"github.com/DemoLiang/wss/golib"
+	"time"
 )
 
 func (c *Connection) GetMapLocation(p Pos, room *GameRoom) (idx int, pos Pos, err error) {
@@ -14,4 +16,20 @@ func (c *Connection) GetMapLocation(p Pos, room *GameRoom) (idx int, pos Pos, er
 		}
 	}
 	return 0, pos, errors.New("get pos error")
+}
+
+//读取队列的内容，如果30S还不确认，则认为未收到确认消息
+func (c *Connection) GetHandlerConfirmData() bool {
+	timer := time.NewTicker(time.Second * 30)
+	defer timer.Stop()
+	for {
+		select {
+		case d := <-c.ConfirDataChan:
+			golib.Log("%v\n", d)
+			return true
+		case <-timer.C:
+			return false
+		}
+	}
+	return false
 }

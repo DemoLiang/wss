@@ -64,7 +64,11 @@ func WsHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
-	c := &Connection{Send: make(chan []byte, 1024), Ws: ws}
+	c := &Connection{
+		Send:           make(chan []byte, 1024),
+		Ws:             ws,
+		ConfirDataChan: make(chan bool, 1),
+	}
 	h.Register <- c
 	ConnHandler(c)
 }

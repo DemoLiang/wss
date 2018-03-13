@@ -17,7 +17,8 @@ type Connection struct {
 	//Session string
 
 	// Buffered channel of outbound messages.
-	Send chan []byte
+	Send           chan []byte
+	ConfirDataChan chan bool
 
 	ClientInfo
 }
@@ -80,17 +81,20 @@ type GameRoom struct {
 
 	//房间状态，用于判断房间是否可用，游戏中的不可用，销毁的不可用，创建的时候可用
 	RoomStatus GAMEROOM_STATUS_ENUM
+
+	//TODO 游戏规则注册，目前采用全局注册规则过滤游戏 FIXME 赶紧可以用interface的接口形式实现，今后改吧
+	GameRules map[GAME_RULE_ENUM]interface{}
 }
 
 type MapElement struct {
-	Descript  string `json:"descript"`
-	LocationX int    `json:"location_x"` //土地X坐标
-	LocationY int    `json:"location_y"` //土地位置Y坐标
-	Level     int    `json:"level"`      //土地星级
-	Fee       int64  `json:"fee"`        //购买基础费用
-	RentFee   int64  `json:"rent_fee"`   //收费租金
-	Status    int    `json:"enable"`     //标记是否可用，已购买，空地，已被抵押
-	Role      int    `json:"role"`       //标记是client地图元素，还是地图模块，还是运气牌模块,起点
+	Descript  string          `json:"descript"`
+	LocationX int             `json:"location_x"` //土地X坐标
+	LocationY int             `json:"location_y"` //土地位置Y坐标
+	Level     int             `json:"level"`      //土地星级
+	Fee       int64           `json:"fee"`        //购买基础费用
+	RentFee   int64           `json:"rent_fee"`   //收费租金
+	Status    int             `json:"enable"`     //标记是否可用，已购买，空地，已被抵押
+	Role      GAME_ROLES_ENUM `json:"role"`       //标记是client地图元素，还是地图模块，还是运气牌模块,起点
 }
 
 type Pos struct {
@@ -218,6 +222,7 @@ type MessageUserLandImpawn struct {
 	LandList   []MapElement `json:"land"`
 }
 
+//用户信息
 type UserInfo struct {
 	nickName  string `json:"nick_name"`  //用户昵称
 	avatarUrl string `json:"avatar_url"` //用户头像，最后一个数值代表正方形头像大小（有0、46、64、96、132数值可选，0代表640*640正方形头像），用户没有头像时该项为空。若用户更换头像，原有头像URL将失效。
@@ -228,8 +233,15 @@ type UserInfo struct {
 	language  string `json:"language"`   //用户的语言，简体中文为zh_CN
 }
 
+//用户登录消息
 type MessageLogin struct {
 	MessageBasicInfo
 	Code     string   `json:"code"`
 	UserInfo UserInfo `json:"user_info"`
+}
+
+type MessageBuyLandConfirm struct {
+	MessageBasicInfo
+	Code     string `json:"code"`
+	Confirem bool   `json:"confirem"`
 }

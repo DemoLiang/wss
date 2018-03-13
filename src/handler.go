@@ -73,6 +73,9 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 	case MESSAGE_TYPE__GAME_START:
 		var gameStart MessageGameStart
 		json.Unmarshal(data, &gameStart)
+
+		//TODO 需要判断是否房主发起的开始游戏
+
 		//获取房间
 		gameRoom := GetGameRoomById(gameStart.GameRoomId)
 
@@ -135,7 +138,10 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 
 		//广播给房间的其它小伙伴，其进行了地产赎回
 		gameRoom.Broadcast <- data
-
+	case MESSAGE_TYPE__BUY_LAND_CONFIRM:
+		var buyLandConfirm MessageBuyLandConfirm
+		json.Unmarshal(data, &buyLandConfirm)
+		c.ConfirDataChan <- buyLandConfirm.Confirem
 	default:
 		//golib.Log("default unknown message")
 	}

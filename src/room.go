@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"github.com/DemoLiang/wss/golib"
 	"github.com/segmentio/ksuid"
 	"sync"
 )
@@ -112,6 +113,8 @@ func (room *GameRoom) GameUserMove(dice int, c *Connection) (err error) {
 	var dstDice int = dice
 	var ok bool
 	var pos Pos
+
+	//获取移动的目标位置点
 	if pos, ok = room.Map.CurrentUserLocation[c]; ok {
 		idx, _, err := c.GetMapLocation(pos, room)
 		if err != nil {
@@ -128,11 +131,11 @@ func (room *GameRoom) GameUserMove(dice int, c *Connection) (err error) {
 		//获取移动距离后的点的坐标
 		mapPos := room.Map.Map[idx+dstDice]
 
-		//更新坐标位置
+		//更新坐标点位置
 		pos.LocationX = mapPos.LocationX
 		pos.LocationY = mapPos.LocationY
 	}
-	//广播移动位置
+	//广播移动的目标位置点
 	var userMove MessageGameUserMove
 	userMove.MessageType = MESSAGE_TYPE__GAME_USER_MOVE
 	userMove.MoveStep = dice
@@ -142,6 +145,7 @@ func (room *GameRoom) GameUserMove(dice int, c *Connection) (err error) {
 	room.Broadcast <- data
 
 	//TODO 移动到的位置，判断是否收租金，是否买地，是否不够钱需要抵押房产
+	room.Map.CurrentUserLocation[c] = pos
 	room.GameDoing(c)
 
 	//判断输赢
@@ -166,44 +170,91 @@ func (room *GameRoom) BankSendMony(c *Connection, mony int64) (err error) {
 func (room *GameRoom) GameDoing(c *Connection) (err error) {
 	var confirmData []byte
 	for con, data := range room.Map.ClientMap {
-		for index, mapData := range data {
-			//过路/自己的地，需要支付租金/升级地产
-			if room.Map.CurrentUserLocation[c].IsEqual(Pos{mapData.LocationX, mapData.LocationY}) {
-				if con == c {
-					//TODO 自己的地，确认是否升级地产
-					var land MessageUserLandUpdate
-					land.Land = room.Map.ClientMap[con][index]
-					land.UpdateFee = land.Land.Fee + int64(float64(land.Land.Level)*0.2+float64(land.Land.Level))*land.Land.Fee
-					land.GameRoomId = room.Id
-					land.MessageType = MESSAGE_TYPE__LAND_UPDATE
-					confirmData, _ = json.Marshal(land)
+		for index, mapLand := range data {
+			switch mapLand.Role {
+			case GAME_ROLE__LAND:
+				//过路/自己的地，需要支付租金/升级地产
+				if room.Map.CurrentUserLocation[c].IsEqual(Pos{mapLand.LocationX, mapLand.LocationY}) {
+					if con == c {
+						//自己的地，确认是否升级地产
+						if room.Map.ClientMap[con][index].Level == int(LAND_LEVEL__MAX) {
+							//最高级别地产，不能继续升级
+							return
+						}
+						var land MessageUserLandUpdate
+						land.Land = room.Map.ClientMap[con][index]
+						land.UpdateFee = land.Land.Fee + int64(float64(land.Land.Level)*0.2+float64(land.Land.Level))*land.Land.Fee
+						land.GameRoomId = room.Id
+						land.MessageType = MESSAGE_TYPE__LAND_UPDATE
+						confirmData, _ = json.Marshal(land)
 
-				} else {
-					//TODO 路过别人的地，需要支付租金
-					room.Money[c] = room.Money[c] - room.Map.ClientMap[con][index].RentFee
-					room.Money[con] = room.Money[con] + room.Map.ClientMap[con][index].RentFee
-					var land MessageUserPayRenFee
-					land.RentFee = room.Map.ClientMap[con][index].RentFee
-					land.GameRoomId = room.Id
-					land.Land = room.Map.ClientMap[con][index]
-					land.MessageType = MESSAGE_TYPE__PAY_RENT_FEE
+						//发送消息，确认是否操作
+						c.Send <- confirmData
 
-					confirmData, _ = json.Marshal(land)
+						//收到确认消息后，确定是否升级土地
+						comfirmFlag := c.GetHandlerConfirmData()
+						if !comfirmFlag {
+							golib.Log("收到确认信息，不升级地产\n")
+						}
+						//收到购买确认信息，购买地产
+						room.Money[c] = room.Money[c] - land.UpdateFee
+						//升级土地级别 FIXME 今后需要用枚举值，判断土地是否到最大级别
+						room.Map.ClientMap[c][index].Level = room.Map.ClientMap[c][index].Level + 1
+					} else {
+						//TODO 路过别人的地，需要支付租金
+						room.Money[c] = room.Money[c] - room.Map.ClientMap[con][index].RentFee
+						room.Money[con] = room.Money[con] + room.Map.ClientMap[con][index].RentFee
+						var land MessageUserPayRenFee
+						land.RentFee = room.Map.ClientMap[con][index].RentFee
+						land.GameRoomId = room.Id
+						land.Land = room.Map.ClientMap[con][index]
+						land.MessageType = MESSAGE_TYPE__PAY_RENT_FEE
+
+						confirmData, _ = json.Marshal(land)
+					}
 				}
-			}
-			//空地，发送消息是否买地
-			var land MessageUserBuyLand
-			land.Land = room.Map.ClientMap[con][index]
-			land.GameRoomId = room.Id
-			land.MessageType = MESSAGE_TYPE__BUY_LAND
+				//空地，发送消息是否买地
+				var land MessageUserBuyLand
+				land.Land = room.Map.ClientMap[con][index]
+				land.GameRoomId = room.Id
+				land.MessageType = MESSAGE_TYPE__BUY_LAND
 
-			confirmData, _ = json.Marshal(land)
-			//
+				confirmData, _ = json.Marshal(land)
+			case GAME_ROLE__START_POINT:
+				//运气
+			case GAME_ROLE__LUCK:
+				//新闻
+			case GAME_ROLE__NEWS:
+				//用户
+			case GAME_ROLE__USER:
+				//证券
+			case GAME_ROLE__SECURITIES_CENTER:
+				//监狱
+			case GAME_ROLE__PRISION:
+				//入狱
+			case GAME_ROLE__JAIL:
+				//公园
+			case GAME_ROLE_PARK:
+				//税务
+			case GAME_ROLE_TAX_CENTER:
+				//核能发电
+			case GAME_ROLE__NUCLEAR_POWER:
+				//建筑公司
+			case GAME_ROLE__CONSTRUCTION_COMPANY:
+				//大陆运输
+			case GAME_ROLE__CONTINENTAL_TRANSPORTION:
+				//电视台
+			case GAME_ROLE__TV_STATION:
+				//航空运输
+			case GAME_ROLE__AIR_TRANSPORTION:
+				//污水处理
+			case GAME_ROLE__SEWAGE_TREATMENT:
+				//大洋运输
+			case GAME_ROLE__OCEAN_TRANSPORTION:
+			default:
+			}
 		}
 	}
-
-	//发送消息，确认是否操作
-	c.Send <- confirmData
 
 	return nil
 }

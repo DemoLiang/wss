@@ -9,7 +9,7 @@
         "fee":0,
         "rent_fee": 0,
         "enable":1,
-        "role":0
+        "role":2
     },
     {
       "location_x": 0,
@@ -19,7 +19,7 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":1
     },
     {
       "location_x": 0,
@@ -29,17 +29,17 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":1
     },
     {
       "location_x": 0,
       "location_y":3,
-      "descript":"投资项目1",
+      "descript":"核能发电",
       "level":0,
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":101
     },
     {
       "location_x": 1,
@@ -49,7 +49,7 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":1
     },
     {
       "location_x": 2,
@@ -59,7 +59,7 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":4
     },
     {
       "location_x": 2,
@@ -69,7 +69,7 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":1
     },
     {
       "location_x": 2,
@@ -79,17 +79,17 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":1
     },
     {
       "location_x": 2,
       "location_y": 6,
-      "descript":"投资项目2",
+      "descript":"建筑公司",
       "level":0,
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":102
     },
     {
       "location_x": 1,
@@ -99,7 +99,7 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":1
     },
     {
       "location_x": 0,
@@ -109,7 +109,7 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":8
     },
     {
       "location_x": 0,
@@ -119,7 +119,7 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":1
     },
     {
       "location_x": 0,
@@ -129,17 +129,17 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":1
     },
     {
       "location_x": 0,
       "location_y": 9,
-      "descript":"投资项目3",
+      "descript":"大陆运输",
       "level":0,
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":103
     },
     {
       "location_x": 1,
@@ -149,7 +149,7 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":1
     },
     {
       "location_x": 2,
@@ -159,7 +159,7 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":3
     },
     {
       "location_x": 3,
@@ -169,17 +169,17 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":1
     },
     {
       "location_x": 4,
       "location_y": 9,
-      "descript":"投资项目4",
+      "descript":"电视台",
       "level":0,
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":104
     },
     {
       "location_x": 5,
@@ -189,7 +189,7 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":1
     },
     {
       "location_x": 6,
@@ -199,17 +199,17 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":1
     },
     {
       "location_x": 7,
       "location_y": 9,
-      "descript":"证券",
+      "descript":"证券中心",
       "level":0,
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":6
     },
     {
       "location_x": 7,
@@ -219,7 +219,7 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":1
     },
     {
       "location_x": 7,
@@ -229,7 +229,7 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":1
     },
     {
       "location_x": 7,
@@ -239,17 +239,17 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":7
     },
     {
       "location_x": 6,
       "location_y": 6,
-      "descript":"投资项目5",
+      "descript":"航空运输",
       "level":0,
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":105
     },
     {
       "location_x": 5,
@@ -259,7 +259,7 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":4
     },
     {
       "location_x": 5,
@@ -269,7 +269,7 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":1
     },
     {
       "location_x": 5,
@@ -279,7 +279,7 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":1
     },
     {
       "location_x": 5,
@@ -289,7 +289,7 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":9
     },
     {
       "location_x": 6,
@@ -299,17 +299,17 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":1
     },
     {
       "location_x": 7,
       "location_y": 3,
-      "descript":"投资项目6",
+      "descript":"污水处理",
       "level":0,
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":106
     },
     {
       "location_x": 7,
@@ -319,7 +319,7 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":1
     },
     {
       "location_x": 7,
@@ -329,17 +329,17 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":1
     },
     {
       "location_x": 7,
       "location_y": 0,
-      "descript":"投资项目7",
+      "descript":"大洋运输",
       "level":0,
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":107
     },
     {
       "location_x": 6,
@@ -349,7 +349,7 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":1
     },
     {
       "location_x": 5,
@@ -359,7 +359,7 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":3
     },
     {
       "location_x": 4,
@@ -369,7 +369,7 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":1
     },
     {
       "location_x": 3,
@@ -379,7 +379,7 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":10
     },
     {
       "location_x": 2,
@@ -389,7 +389,7 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":1
     },
     {
       "location_x": 1,
@@ -399,7 +399,7 @@
       "fee":1300,
       "rent_fee": 0,
       "enable":1,
-      "role":0
+      "role":1
     }
   ]
 }
