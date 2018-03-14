@@ -261,8 +261,28 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 				}
 			case GAME_ROLE__LUCK:
 				//运气
+				var luckCard MessageGameLuckCard
+				luckCard.GameRoomId = room.Id
+				luckCardNo := room.LuckCard()
+				luckCard.LuckCardNo = luckCardNo
+				luckCard.MessageType = MESSAGE_TYPE__LUCK_CARD
+				luckData, _ := json.Marshal(&luckCard)
+				//处理运气牌
+				room.HandlerLuckCards(c, luckCard.LuckCardNo)
+				//广播给房间其它的小伙伴
+				room.Broadcast <- luckData
 			case GAME_ROLE__NEWS:
 				//新闻
+				var newsCard MessageGameNewsCard
+				newsCard.GameRoomId = room.Id
+				newsCardNo := room.NewsCard()
+				newsCard.NewsCardNo = newsCardNo
+				newsCard.MessageType = MESSAGE_TYPE__NEWS_CARD
+				//处理新闻牌
+				room.HandlerNewsCards(c, newsCard.NewsCardNo)
+				//广播给房间其它的小伙伴
+				newsData, _ := json.Marshal(&newsCard)
+				room.Broadcast <- newsData
 			case GAME_ROLE__SECURITIES_CENTER:
 				//证券
 			case GAME_ROLE__PRISION:
@@ -271,7 +291,15 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 				//入狱
 			case GAME_ROLE_PARK:
 				//公园
+				var park MessageMove2Park
+				park.GameRoomId = room.Id
+				park.MessageType = MESSAGE_TYPE__MOVE_2_PARK
+				park.Code = c.Code
+				park.Money = 300
 				room.Money[c] += 300
+				//广播给房间其它的小伙伴
+				parkData, _ := json.Marshal(&park)
+				room.Broadcast <- parkData
 			case GAME_ROLE_TAX_CENTER:
 				//税务
 			case GAME_ROLE__NUCLEAR_POWER:
@@ -342,6 +370,18 @@ func (room *GameRoom) LandRedeem(c *Connection, mapList []MapElement) {
 	}
 
 	return
+}
+
+//处理运气卡
+func (room *GameRoom) HandlerLuckCards(c *Connection, luckCardNo int) (err error) {
+
+	return nil
+}
+
+//处理新闻卡
+func (room *GameRoom) HandlerNewsCards(c *Connection, newCardNo int) (err error) {
+
+	return nil
 }
 
 //判断游戏是否结束

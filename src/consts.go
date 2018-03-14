@@ -36,6 +36,8 @@ const (
 	MESSAGE_TYPE__LAND_REDEEM
 	//游戏结束
 	MESSAGE_TYPE__GAME_DONE
+	//移动到公园消息
+	MESSAGE_TYPE__MOVE_2_PARK
 )
 
 type LUCK_CARD_TYPE_ENUM int

@@ -267,3 +267,10 @@ type MessageUpdateLandConfirm struct {
 	Confirem bool       `json:"confirem"`
 	Land     MapElement `json:"land"`
 }
+
+//公园消息
+type MessageMove2Park struct {
+	MessageBasicInfo
+	Code  string `json:"code"`
+	Money int    `json:"money"`
+}

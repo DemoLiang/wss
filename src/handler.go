@@ -103,6 +103,7 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 		gameRoom.SetRoomStatus(GAMEROOM_STATUS__DICE_DISAVAILABLE)
 		//掷完骰子后，就自动移动
 		gameRoom.GameUserMove(dice, c)
+		//摇动完骰子，置为可用
 		gameRoom.SetRoomStatus(GAMEROOM_STATUS__DICE_AVAILABLE)
 	case MESSAGE_TYPE__LUCK_CARD:
 		var luckCard MessageGameLuckCard
