@@ -23,17 +23,18 @@ func RandNumber() (number int) {
 func (c *Connection) HandlerMessage(data []byte) (err error) {
 	var messageBasicInfo MessageBasicInfo
 	json.Unmarshal(data, &messageBasicInfo)
-	if c.Session == "" && messageBasicInfo.MessageType != MESSAGE_TYPE__LOGIN_SERVER {
-		c.Send <- []byte("请先登录")
-		return golib.EInternalError
-	}
+	//if c.Session == "" && messageBasicInfo.MessageType != MESSAGE_TYPE__LOGIN_SERVER {
+	//	c.Send <- []byte("请先登录")
+	//	return golib.EInternalError
+	//}
 
 	switch messageBasicInfo.MessageType {
 	case MESSAGE_TYPE__LOGIN_SERVER:
 		var login MessageLogin
 		var openid, session_key string
 		json.Unmarshal(data, &login)
-		openid, session_key = wechat.GetWeChatOpenIdByCode(c.Code)
+		golib.Log("code:%v\n", login.Code)
+		openid, session_key = wechat.GetWeChatOpenIdByCode(login.Code)
 		if openid == "" || session_key == "" {
 			return golib.EInternalError
 		}
@@ -80,7 +81,7 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 		gameRoom := GetGameRoomById(gameStart.GameRoomId)
 
 		//把房间变为不可用，游戏开始
-		gameRoom.RoomStatus = GAMEROOM_STATUS__GAMESTART
+		gameRoom.SetRoomStatus(GAMEROOM_STATUS__GAMESTART)
 
 		//返回前端房间信息,客户端信息
 		gameStart.ClientInfoList = GetGameRoomClientInfo(gameStart.GameRoomId)
@@ -99,9 +100,10 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 		data, _ := json.Marshal(&shakeDice)
 		//广播给房间其它的小伙伴
 		gameRoom.Broadcast <- data
-
+		gameRoom.SetRoomStatus(GAMEROOM_STATUS__DICE_DISAVAILABLE)
 		//掷完骰子后，就自动移动
 		gameRoom.GameUserMove(dice, c)
+		gameRoom.SetRoomStatus(GAMEROOM_STATUS__DICE_AVAILABLE)
 	case MESSAGE_TYPE__LUCK_CARD:
 		var luckCard MessageGameLuckCard
 		json.Unmarshal(data, &luckCard)
@@ -130,6 +132,8 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 
 		//广播给房间的其它小伙伴，其进行了地产抵押
 		gameRoom.Broadcast <- data
+		//通知正在处理业务的端，已经确认抵押，可以进行下一步
+		c.ConfirDataChan <- true
 	case MESSAGE_TYPE__LAND_REDEEM:
 		var landRedeem MessageUserLandRedeem
 		json.Unmarshal(data, &landRedeem)
@@ -141,7 +145,14 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 	case MESSAGE_TYPE__BUY_LAND_CONFIRM:
 		var buyLandConfirm MessageBuyLandConfirm
 		json.Unmarshal(data, &buyLandConfirm)
+		room := GetGameRoomById(buyLandConfirm.GameRoomId)
+		room.BuyLand(c, buyLandConfirm.Land)
 		c.ConfirDataChan <- buyLandConfirm.Confirem
+	case MESSAGE_TYPE__LAND_UPDATE_CONFIRM:
+		var updateLandConfirm MessageUpdateLandConfirm
+		json.Unmarshal(data, &updateLandConfirm)
+		room := GetGameRoomById(updateLandConfirm.GameRoomId)
+		room.UpdateLand(c, updateLandConfirm.Land)
 	default:
 		//golib.Log("default unknown message")
 	}

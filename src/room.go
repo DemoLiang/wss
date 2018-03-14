@@ -32,7 +32,7 @@ func NewGameRoom(number int) (gameRoom *GameRoom) {
 	//初始化地图
 	gameRoom.InitGameMap()
 
-	gameRoom.RoomStatus = GAMEROOM_STATUS__ENABLE
+	gameRoom.SetRoomStatus(GAMEROOM_STATUS__ENABLE)
 	return
 }
 
@@ -149,7 +149,17 @@ func (room *GameRoom) GameUserMove(dice int, c *Connection) (err error) {
 	room.GameDoing(c)
 
 	//判断输赢
-	room.CheckGameDone()
+	gameFlag, c, _ := room.CheckGameDone()
+	if gameFlag {
+		var gameDone MessageGameDoenMessage
+		gameDone.MessageType = MESSAGE_TYPE__GAME_DONE
+		gameDone.GameRoomId = room.Id
+		gameDone.Code = c.Code
+		data, _ := json.Marshal(&gameDone)
+		//广播游戏结束
+		room.Broadcast <- data
+	}
+
 	return nil
 }
 
@@ -166,6 +176,20 @@ func (room *GameRoom) BankSendMony(c *Connection, mony int64) (err error) {
 	return nil
 }
 
+//获取房间状态
+func (room *GameRoom) GetRoomStatus() (roomStatus GAMEROOM_STATUS_ENUM) {
+	room.RoomStatusLock.Lock()
+	defer room.RoomStatusLock.Unlock()
+	return room.RoomStatus
+}
+
+//设置房间状态
+func (room *GameRoom) SetRoomStatus(roomStatus GAMEROOM_STATUS_ENUM) {
+	room.RoomStatusLock.Lock()
+	defer room.RoomStatusLock.Unlock()
+	room.RoomStatus = roomStatus
+}
+
 //用户掷完骰子后，检查需要做的动作，比如：付租金，买地，升级地产，抵押地产来付租金，
 func (room *GameRoom) GameDoing(c *Connection) (err error) {
 	var confirmData []byte
@@ -178,6 +202,7 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 					if con == c {
 						//自己的地，确认是否升级地产
 						if room.Map.ClientMap[con][index].Level == int(LAND_LEVEL__MAX) {
+							golib.Log("已经是最高等级地产%v\n")
 							//最高级别地产，不能继续升级
 							return
 						}
@@ -196,12 +221,8 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 						if !comfirmFlag {
 							golib.Log("收到确认信息，不升级地产\n")
 						}
-						//收到购买确认信息，购买地产
-						room.Money[c] = room.Money[c] - land.UpdateFee
-						//升级土地级别 FIXME 今后需要用枚举值，判断土地是否到最大级别
-						room.Map.ClientMap[c][index].Level = room.Map.ClientMap[c][index].Level + 1
 					} else {
-						//TODO 路过别人的地，需要支付租金
+						//TODO 路过别人的地，需要支付租金，支付租金不需要确认，如果需要抵押，则需要确认抵押的房产
 						room.Money[c] = room.Money[c] - room.Map.ClientMap[con][index].RentFee
 						room.Money[con] = room.Money[con] + room.Map.ClientMap[con][index].RentFee
 						var land MessageUserPayRenFee
@@ -209,48 +230,64 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 						land.GameRoomId = room.Id
 						land.Land = room.Map.ClientMap[con][index]
 						land.MessageType = MESSAGE_TYPE__PAY_RENT_FEE
-
+						land.LandImpawn = room.Map.ClientMap[c]
 						confirmData, _ = json.Marshal(land)
+						c.Send <- confirmData
+
+						//如果缴纳租金后，余额小于0，则需要抵押
+						if room.Money[c] < 0 {
+							//收到确认消息后，确定是否抵押完成，则进行下一步
+							comfirmFlag := c.GetHandlerConfirmData()
+							if comfirmFlag {
+								golib.Log("收到确认信息，抵押地产\n")
+							}
+							//TODO 如果用户点击抵押那块地，则认为它不选，则系统随机抵押
+						}
+					}
+				} else {
+					//空地，发送消息是否买地
+					var land MessageUserBuyLand
+					land.Land = room.Map.ClientMap[con][index]
+					land.GameRoomId = room.Id
+					land.MessageType = MESSAGE_TYPE__BUY_LAND
+
+					confirmData, _ = json.Marshal(land)
+					c.Send <- confirmData
+					//收到确认消息后，确定购买地产
+					comfirmFlag := c.GetHandlerConfirmData()
+					if comfirmFlag {
+						golib.Log("收到确认信息，确定购买地产\n")
 					}
 				}
-				//空地，发送消息是否买地
-				var land MessageUserBuyLand
-				land.Land = room.Map.ClientMap[con][index]
-				land.GameRoomId = room.Id
-				land.MessageType = MESSAGE_TYPE__BUY_LAND
-
-				confirmData, _ = json.Marshal(land)
-			case GAME_ROLE__START_POINT:
-				//运气
 			case GAME_ROLE__LUCK:
-				//新闻
+				//运气
 			case GAME_ROLE__NEWS:
-				//用户
-			case GAME_ROLE__USER:
-				//证券
+				//新闻
 			case GAME_ROLE__SECURITIES_CENTER:
-				//监狱
+				//证券
 			case GAME_ROLE__PRISION:
-				//入狱
+				//监狱
 			case GAME_ROLE__JAIL:
-				//公园
+				//入狱
 			case GAME_ROLE_PARK:
-				//税务
+				//公园
+				room.Money[c] += 300
 			case GAME_ROLE_TAX_CENTER:
-				//核能发电
+				//税务
 			case GAME_ROLE__NUCLEAR_POWER:
-				//建筑公司
+				//核能发电
 			case GAME_ROLE__CONSTRUCTION_COMPANY:
-				//大陆运输
+				//建筑公司
 			case GAME_ROLE__CONTINENTAL_TRANSPORTION:
-				//电视台
+				//大陆运输
 			case GAME_ROLE__TV_STATION:
-				//航空运输
+				//电视台
 			case GAME_ROLE__AIR_TRANSPORTION:
-				//污水处理
+				//航空运输
 			case GAME_ROLE__SEWAGE_TREATMENT:
-				//大洋运输
+				//污水处理
 			case GAME_ROLE__OCEAN_TRANSPORTION:
+				//大洋运输
 			default:
 			}
 		}
@@ -259,14 +296,32 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 	return nil
 }
 
+//购买地产
+func (room *GameRoom) BuyLand(c *Connection, land MapElement) (err error) {
+	room.Map.ClientMap[c] = append(room.Map.ClientMap[c], land)
+	return nil
+}
+
+//升级地产
+func (room *GameRoom) UpdateLand(c *Connection, land MapElement) (err error) {
+	for _, data := range room.Map.ClientMap[c] {
+		if data.IsEqual(land) {
+			//扣除钱 FIXME 需要判断钱够不够
+			room.Money[c] = room.Money[c] - int64(float64(data.Level)*0.2+float64(data.Level))*data.Fee
+			//升级土地级别 FIXME 今后需要用枚举值，判断土地是否到最大级别
+			data.Level += 1
+		}
+	}
+	return nil
+}
+
 //用户地产抵押
 func (room *GameRoom) LandImpawn(c *Connection, mapList []MapElement) (err error) {
 	for idx, data := range mapList {
 		if room.Map.ClientMap[c][idx].IsEqual(data) {
-			//判断地产是否是同一个地产，如果是同一个地产，则把地产赎回，并根据地产计算费用
-			//支付费用
+			//抵押清算费用
 			room.Money[c] = room.Money[c] + room.Map.ClientMap[c][idx].Fee
-			//把地产变为可用
+			//把地产变为不可用
 			room.Map.ClientMap[c][idx].Status = 0
 		}
 	}
@@ -279,7 +334,7 @@ func (room *GameRoom) LandRedeem(c *Connection, mapList []MapElement) {
 	for idx, data := range mapList {
 		if room.Map.ClientMap[c][idx].IsEqual(data) {
 			//判断地产是否是同一个地产，如果是同一个地产，则把地产赎回，并根据地产计算费用
-			//支付费用
+			//支付费用，TODO 如果钱不够，不能赎回
 			room.Money[c] = room.Money[c] - room.Map.ClientMap[c][idx].Fee
 			//把地产变为可用
 			room.Map.ClientMap[c][idx].Status = 1
@@ -290,23 +345,31 @@ func (room *GameRoom) LandRedeem(c *Connection, mapList []MapElement) {
 }
 
 //判断游戏是否结束
-func (r *GameRoom) CheckGameDone() (done bool, err error) {
+func (r *GameRoom) CheckGameDone() (done bool, con *Connection, err error) {
 	var count int = 0
-	for _, data := range r.Money {
+	for c, data := range r.Money {
 		if data >= GAME_DOEN_MONY {
-			return true, nil
+			return true, c, nil
 		}
-		//FIXME 还需要判断用户是否还有地产，如果地产，则说明其还可以进行抵押
 		if data <= 0 {
 			count++
 		}
 		//已经是最后的一个用户
 		if count >= len(r.Connections)-1 {
-			return true, nil
+			return true, c, nil
+		}
+	}
+	var clienFlag int
+	for c, data := range r.Map.ClientMap {
+		if len(data) <= 0 {
+			clienFlag += 1
+		}
+		if clienFlag >= len(r.Connections)-1 {
+			return true, c, nil
 		}
 	}
 
-	return false, nil
+	return false, nil, nil
 }
 
 //判断一个点是否跟自己属于同一个点

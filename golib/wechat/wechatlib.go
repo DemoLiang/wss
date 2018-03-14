@@ -12,8 +12,8 @@ import (
 
 const (
 	WECHAT_HOST = "https://api.weixin.qq.com"
-	APPID       = ""
-	SECRET      = ""
+	APPID       = "wxb451d970d83674d0"
+	SECRET      = "ec9d8780978119c0f52ca4a04fb5bd69"
 )
 
 const (
@@ -26,6 +26,7 @@ var WeChatProgramReqPath = map[int]string{
 }
 
 func WeChatProgramUserInfoReq(code, appid string) (rsp []byte, err error) {
+	golib.Log("code:%v\n", code)
 	headData := url.Values{}
 	headData.Set("appid", appid)
 	headData.Set("secret", SECRET)
@@ -58,6 +59,7 @@ func WeChatProgramUserInfoReq(code, appid string) (rsp []byte, err error) {
 }
 
 func GetWeChatOpenIdByCode(code string) (openid, session_key string) {
+	golib.Log("code:%v\n", code)
 	rsp, err := WeChatProgramUserInfoReq(code, APPID)
 	if err != nil {
 		return "", ""

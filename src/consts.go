@@ -24,6 +24,8 @@ const (
 	MESSAGE_TYPE__PAY_RENT_FEE
 	//升级地产消息
 	MESSAGE_TYPE__LAND_UPDATE
+	//升级地产确认消息
+	MESSAGE_TYPE__LAND_UPDATE_CONFIRM
 	//购买地产消息
 	MESSAGE_TYPE__BUY_LAND
 	//购买地产确认消息
@@ -32,6 +34,8 @@ const (
 	MESSAGE_TYPE__LAND_IMPAWN
 	//赎回地产消息
 	MESSAGE_TYPE__LAND_REDEEM
+	//游戏结束
+	MESSAGE_TYPE__GAME_DONE
 )
 
 type LUCK_CARD_TYPE_ENUM int
@@ -72,6 +76,10 @@ const (
 	GAMEROOM_STATUS__ENABLE
 	//房间游戏开始
 	GAMEROOM_STATUS__GAMESTART
+	//骰子可用，也就是意味着，房间可以进行下一步
+	GAMEROOM_STATUS__DICE_AVAILABLE
+	//骰子不可用，也就意味着，房间不能进行下一步
+	GAMEROOM_STATUS__DICE_DISAVAILABLE
 	//房间不可用
 	GAMEROOM_STATUS__DISABLE
 )

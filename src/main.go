@@ -12,7 +12,7 @@ import (
 
 var (
 	InitialGameMap GameMap
-	addr           = flag.String("addr", ":7777", "http service address")
+	addr           = flag.String("addr", ":8888", "http service address")
 )
 
 func main() {
@@ -40,7 +40,10 @@ func main() {
 		golib.Log("err:%v", err)
 		return
 	}
-	golib.Log("InitialGameMap:%v\n", InitialGameMap)
+	for idx, data := range InitialGameMap.Map {
+		golib.Log("%v %v\n", idx, data)
+	}
+	//golib.Log("InitialGameMap:%v\n", InitialGameMap)
 
 	//启动注册函数
 	go h.run()

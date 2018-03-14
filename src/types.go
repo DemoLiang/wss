@@ -1,6 +1,9 @@
 package main
 
-import "github.com/gorilla/websocket"
+import (
+	"github.com/gorilla/websocket"
+	"sync"
+)
 
 // connection is an middleman between the websocket connection and the hub.
 type Connection struct {
@@ -81,6 +84,8 @@ type GameRoom struct {
 
 	//房间状态，用于判断房间是否可用，游戏中的不可用，销毁的不可用，创建的时候可用
 	RoomStatus GAMEROOM_STATUS_ENUM
+	//房间状态锁
+	RoomStatusLock sync.Mutex
 
 	//TODO 游戏规则注册，目前采用全局注册规则过滤游戏 FIXME 赶紧可以用interface的接口形式实现，今后改吧
 	GameRules map[GAME_RULE_ENUM]interface{}
@@ -190,11 +195,12 @@ type MessageUserBuyLand struct {
 //用户支付租金消息
 type MessageUserPayRenFee struct {
 	MessageBasicInfo
-	GameUserid            string     `json:"game_userid"`
-	GameRecvRentfeeUserid string     `json:"game_recv_renfee_userid"`
-	RentFee               int64      `json:"rent_fee"`
-	GameRoomId            string     `json:"game_room_id"`
-	Land                  MapElement `json:"land"`
+	GameUserid            string       `json:"game_userid"`
+	GameRecvRentfeeUserid string       `json:"game_recv_renfee_userid"`
+	RentFee               int64        `json:"rent_fee"`
+	GameRoomId            string       `json:"game_room_id"`
+	Land                  MapElement   `json:"land"`
+	LandImpawn            []MapElement `json:"land_impawn"` //支付租金，可以抵押的房产
 }
 
 //用户升级地产消息确认
@@ -240,8 +246,24 @@ type MessageLogin struct {
 	UserInfo UserInfo `json:"user_info"`
 }
 
+//购买地产确认消息
 type MessageBuyLandConfirm struct {
 	MessageBasicInfo
-	Code     string `json:"code"`
-	Confirem bool   `json:"confirem"`
+	Code     string     `json:"code"`
+	Confirem bool       `json:"confirem"`
+	Land     MapElement `json:"land"`
+}
+
+//游戏结束消息
+type MessageGameDoenMessage struct {
+	MessageBasicInfo
+	Code string `json:"code"`
+}
+
+//升级地产确认消息
+type MessageUpdateLandConfirm struct {
+	MessageBasicInfo
+	Code     string     `json:"code"`
+	Confirem bool       `json:"confirem"`
+	Land     MapElement `json:"land"`
 }

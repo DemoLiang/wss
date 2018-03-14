@@ -13,7 +13,7 @@ Page({
   //事件处理函数
   bindViewTap: function() {
     wx.connectSocket({
-      url: 'ws://127.0.0.1:7777/ws',
+      url: 'ws://127.0.0.1:8888/ws',
       method:"GET",
       success:res => {
         console.log("aaaaaaaaaaaa")
