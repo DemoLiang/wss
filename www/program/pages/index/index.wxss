@@ -56,3 +56,20 @@
   border-left-width: 1px;
   color: #ff0000
 }
+
+.code{
+  border-style: solid; 
+  border-top-width: 1px;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  color: #ff0000
+}
+/* .land{
+   border-style: solid;  
+   border-top-width: 1px;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  color: #ff0000
+} */

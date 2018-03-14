@@ -23,11 +23,17 @@
   </div> -->
   <view class="section">
   <form bindsubmit="bindFormSubmit">
-    <label style='margin: left;display:flex; '>message_type:
+    <label style='margin: left;display:flex; '>type:
       <input type='text' class='message_type' name='message_type'></input>
     </label>
     <label style='display:flex;'>roomid:
       <input type='text' class='roomid' name='roomid'></input>
+    </label>
+     <label style='display:flex;'>code:
+      <input type='text' class='code' name='code'></input>
+    </label>
+     <label style='display:flex;'>land:
+      <input type='text' class='land' name='land' style=' border-style: solid;  color: #ff0000'></input>
     </label>
     <textarea placeholder="json data" class="form-control" name="textarea" style="height:100px;width:300px;"/>
     <button form-type="submit"> 提交 </button>
