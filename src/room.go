@@ -35,13 +35,13 @@ func NewGameRoom(number int) (gameRoom *GameRoom) {
 	gameRoom.SetRoomStatus(GAMEROOM_STATUS__ENABLE)
 	return
 }
-
+//初始化运气卡
 func (r *GameRoom) InitLuckCardMap() {
 	for i := int(LUCK_CARD_TYPE__MIN) + 1; i < int(LUCK_CARD_TYPE__MAX); i++ {
 		r.LuckCards[LUCK_CARD_TYPE_ENUM(i)] = true
 	}
 }
-
+//初始化新闻卡
 func (r *GameRoom) InitNewsCardMap() {
 	for i := int(NEWS_CARD_TYPE__MIN) + 1; i < int(NEWS_CARD_TYPE__MAX); i++ {
 		r.NewsCards[NEWS_CARD_TYPE_ENUM(i)] = true

@@ -12,6 +12,7 @@ import (
 
 var (
 	InitialGameMap GameMap
+	RulesFilter map[LUCK_CARD_TYPE_ENUM]interface{}
 	addr           = flag.String("addr", ":8888", "http service address")
 )
 
@@ -44,6 +45,9 @@ func main() {
 		golib.Log("%v %v\n", idx, data)
 	}
 	//golib.Log("InitialGameMap:%v\n", InitialGameMap)
+
+	//注册规则处理函数
+	InitRules()
 
 	//启动注册函数
 	go h.run()
