@@ -136,7 +136,8 @@ type ClientInfo struct {
 type MessageBasicInfo struct {
 	MessageType MESSAGE_TYPE_ENUM `json:"message_type"` //消息类型
 	GameRoomId  string            `json:"game_room_id"` //房间ID号
-	Code string `json:"code"`	//用户登录session code
+	Code        string            `json:"code"`         //用户登录session code
+	Description string            `json:"description"`  //消息描述
 }
 
 //创建房间
@@ -210,11 +211,11 @@ type MessageUserPayRenFee struct {
 //用户升级地产消息确认
 type MessageUserLandUpdate struct {
 	MessageBasicInfo
-	GameUserid string     `json:"game_userid"`
-	UpdateFee  map[*MapElement]int64      `json:"update_fee"`
-	GameRoomId string     `json:"game_room_id"`
-	Land       []MapElement `json:"land"`
-	Number int `json:"number"`	//可以升级的地产数目
+	GameUserid string                `json:"game_userid"`
+	UpdateFee  map[*MapElement]int64 `json:"update_fee"`
+	GameRoomId string                `json:"game_room_id"`
+	Land       []MapElement          `json:"land"`
+	Number     int                   `json:"number"` //可以升级的地产数目
 }
 
 //用户地产赎回消息
@@ -283,14 +284,36 @@ type MessageMove2Park struct {
 //推送消息是否移动到起点
 type MessageMoveStartPoint struct {
 	MessageBasicInfo
-	Code string `json:"code"`
-	Money int64 `json:"money"`
-	SEQ string `json:"seq"`
-	ConfirmResult bool `json:"confirm_result"`
+	Code          string `json:"code"`
+	Money         int64  `json:"money"`
+	SEQ           string `json:"seq"`
+	ConfirmResult bool   `json:"confirm_result"`
 }
 
-
+//规则一 推送消息
 type MessageRuleFilterNO1 struct {
+	MessageBasicInfo
+	Money int64 `json:"money"`
+}
+
+//规则二 推送消息
+type MessageRuleFilterNO2 struct {
+	MessageBasicInfo
+}
+
+//规则四
+type MessageRuleFilterNO4 struct {
+	MessageBasicInfo
+	Money int64 `json:"money"`
+}
+
+//规则五
+type MessageRuleFilterNO5 struct {
+	MessageBasicInfo
+	Money int64 `json:"money"`
+}
+
+type MessageRuleFilterNO6 struct {
 	MessageBasicInfo
 	Money int64 `json:"money"`
 }
