@@ -207,10 +207,12 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 							return
 						}
 						var land MessageUserLandUpdate
-						land.Land = room.Map.ClientMap[con][index]
-						land.UpdateFee = land.Land.Fee + int64(float64(land.Land.Level)*0.2+float64(land.Land.Level))*land.Land.Fee
+						tempLand := room.Map.ClientMap[con][index]
+						land.Land = append(land.Land,tempLand)
+						land.UpdateFee[&tempLand] = GetLandUpdateFee(tempLand)
 						land.GameRoomId = room.Id
 						land.MessageType = MESSAGE_TYPE__LAND_UPDATE
+						land.Number = 1
 						confirmData, _ = json.Marshal(land)
 
 						//发送消息，确认是否操作
@@ -372,8 +374,9 @@ func (room *GameRoom) LandRedeem(c *Connection, mapList []MapElement) {
 	return
 }
 
-//处理运气卡
+//处理运气卡，走到此处说明，说明已经是处理过了，确定了次运气卡还在游戏的堆里，只需要调用过滤函数即可
 func (room *GameRoom) HandlerLuckCards(c *Connection, luckCardNo int) (err error) {
+	RulesFilter[LUCK_CARD_TYPE_ENUM(luckCardNo)](room,c)
 
 	return nil
 }
@@ -427,6 +430,11 @@ func (m MapElement) IsEqual(m1 MapElement) bool {
 		return true
 	}
 	return false
+}
+
+//获取一块地产的升级费用
+func GetLandUpdateFee(land MapElement)(fee int64){
+	return land.Fee + int64(float64(land.Level)*0.2+float64(land.Level))*land.Fee
 }
 
 func newID() string {

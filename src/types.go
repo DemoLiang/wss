@@ -89,6 +89,9 @@ type GameRoom struct {
 
 	//TODO 游戏规则注册，目前采用全局注册规则过滤游戏 FIXME 赶紧可以用interface的接口形式实现，今后改吧
 	GameRules map[GAME_RULE_ENUM]interface{}
+
+	//某些规则会出发停留，停留的需要放入停留的
+	StopStep map[*Connection]int
 }
 
 type MapElement struct {
@@ -133,6 +136,7 @@ type ClientInfo struct {
 type MessageBasicInfo struct {
 	MessageType MESSAGE_TYPE_ENUM `json:"message_type"` //消息类型
 	GameRoomId  string            `json:"game_room_id"` //房间ID号
+	Code string `json:"code"`	//用户登录session code
 }
 
 //创建房间
@@ -207,9 +211,10 @@ type MessageUserPayRenFee struct {
 type MessageUserLandUpdate struct {
 	MessageBasicInfo
 	GameUserid string     `json:"game_userid"`
-	UpdateFee  int64      `json:"update_fee"`
+	UpdateFee  map[*MapElement]int64      `json:"update_fee"`
 	GameRoomId string     `json:"game_room_id"`
-	Land       MapElement `json:"land"`
+	Land       []MapElement `json:"land"`
+	Number int `json:"number"`	//可以升级的地产数目
 }
 
 //用户地产赎回消息
@@ -273,4 +278,19 @@ type MessageMove2Park struct {
 	MessageBasicInfo
 	Code  string `json:"code"`
 	Money int    `json:"money"`
+}
+
+//推送消息是否移动到起点
+type MessageMoveStartPoint struct {
+	MessageBasicInfo
+	Code string `json:"code"`
+	Money int64 `json:"money"`
+	SEQ string `json:"seq"`
+	ConfirmResult bool `json:"confirm_result"`
+}
+
+
+type MessageRuleFilterNO1 struct {
+	MessageBasicInfo
+	Money int64 `json:"money"`
 }
