@@ -178,13 +178,13 @@ func LuckCardsFilterNO7(room *GameRoom, c *Connection) (err error) {
 	return nil
 }
 
-//立即移动到你的左边手玩家的位置，并按该结果结算
+//TODO 立即移动到你的左边手玩家的位置，并按该结果结算
 func LuckCardsFilterNO8(room *GameRoom, c *Connection) (err error) {
 
 	return nil
 }
 
-//立即移动到你右手边玩家的位置，并按该结果结算
+//TODO 立即移动到你右手边玩家的位置，并按该结果结算
 func LuckCardsFilterNO9(room *GameRoom, c *Connection) (err error) {
 
 	return nil
@@ -224,14 +224,14 @@ func LuckCardsFilterNO11(room *GameRoom, c *Connection) (err error) {
 	return nil
 }
 
-//购买最新款私人坐骑，支付400元，并立即额外进行一回合的行动
+//TODO 购买最新款私人坐骑，支付400元，并立即额外进行一回合的行动
 func LuckCardsFilterNO12(room *GameRoom, c *Connection) (err error) {
 
 	return nil
 }
 
 //新闻卡处理函数
-//投资项目分红，距离证券中心最近的玩家获得500元
+//TODO 投资项目分红，距离证券中心最近的玩家获得500元
 func NewsCardsFilterNO1(room *GameRoom, c *Connection) (err error) {
 	return nil
 }
@@ -355,12 +355,12 @@ func NewsCardsFilterNO6(room *GameRoom, c *Connection) (err error) {
 	return nil
 }
 
-//无名慈善家资助，每位玩家可以立即免费赎回一块抵偿
+//TODO 无名慈善家资助，每位玩家可以立即免费赎回一块抵偿
 func NewsCardsFilterNO7(room *GameRoom, c *Connection) (err error) {
 	return nil
 }
 
-//全体玩家参加狂欢节，在你下次行动结束前，所有玩家移动移动时都变为后退
+//TODO 全体玩家参加狂欢节，在你下次行动结束前，所有玩家移动移动时都变为后退
 func NewsCardsFilterNO8(room *GameRoom, c *Connection) (err error) {
 	return nil
 }
@@ -390,12 +390,12 @@ func NewsCardsFilterNO9(room *GameRoom, c *Connection) (err error) {
 	return nil
 }
 
-//百年一遇特大暴雨，所有玩家原地停留一回合
+//TODO 百年一遇特大暴雨，所有玩家原地停留一回合
 func NewsCardsFilterNO10(room *GameRoom, c *Connection) (err error) {
 	return nil
 }
 
-//发生灵异事件，在你下次行动结束前，所有玩家都无须支付任何费用
+//TODO 发生灵异事件，在你下次行动结束前，所有玩家都无须支付任何费用
 func NewsCardsFilterNO11(room *GameRoom, c *Connection) (err error) {
 	return nil
 }
