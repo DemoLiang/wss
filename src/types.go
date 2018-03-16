@@ -331,8 +331,6 @@ type MessageLuckRuleFilterNO11 struct {
 	Money int64 `json:"money"`
 }
 
-
-
 //新闻卡过滤规则二
 type MessageNewsRuleFilterNO2 struct {
 	MessageBasicInfo
@@ -355,4 +353,19 @@ type MessageNewsRuleFilterNO4 struct {
 type MessageNewsRuleFilterNO5 struct {
 	MessageBasicInfo
 	Money int64 `json:"money"`
+}
+
+//新闻过滤规则9
+type MessageNewRuleFilterNO9 struct {
+	MessageBasicInfo
+	LandList []MapElement `json:"land_list"`
+	Land     MapElement   `json:"land"`
+}
+
+//新闻过滤规则12
+type MessageNewRuleFilterNO12 struct {
+	MessageBasicInfo
+	LandList []MapElement `json:"land_list"`
+	Money    int64        `json:"money"`
+	Number   int64        `json:"number"`
 }

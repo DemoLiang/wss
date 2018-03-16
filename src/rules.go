@@ -181,7 +181,6 @@ func LuckCardsFilterNO7(room *GameRoom, c *Connection) (err error) {
 //立即移动到你的左边手玩家的位置，并按该结果结算
 func LuckCardsFilterNO8(room *GameRoom, c *Connection) (err error) {
 
-
 	return nil
 }
 
@@ -241,7 +240,7 @@ func NewsCardsFilterNO1(room *GameRoom, c *Connection) (err error) {
 func NewsCardsFilterNO2(room *GameRoom, c *Connection) (err error) {
 	var ruleNO2List []MessageNewsRuleFilterNO2
 	var index int = 0
-	for con,_ := range room.Money{
+	for con, _ := range room.Money {
 		room.Money[c] += 1000
 		ruleNO2List[index].MessageType = MESSAGE_TYPE__LUCK_CARD__NO11
 		ruleNO2List[index].Code = con.Code
@@ -260,11 +259,11 @@ func NewsCardsFilterNO2(room *GameRoom, c *Connection) (err error) {
 func NewsCardsFilterNO3(room *GameRoom, c *Connection) (err error) {
 	var ruleNO3 MessageNewsRuleFilterNO3
 	var flag bool = false
-	for con,data := range room.Map.ClientMap{
-		for _,land:= range data{
-			if land.Role == GAME_ROLE__NUCLEAR_POWER{
+	for con, data := range room.Map.ClientMap {
+		for _, land := range data {
+			if land.Role == GAME_ROLE__NUCLEAR_POWER {
 				flag = true
-				room.Money[con] -=300
+				room.Money[con] -= 300
 				ruleNO3.Money = -300
 				ruleNO3.GameRoomId = room.Id
 				ruleNO3.Code = con.Code
@@ -273,7 +272,7 @@ func NewsCardsFilterNO3(room *GameRoom, c *Connection) (err error) {
 		}
 	}
 
-	if flag{
+	if flag {
 		golib.Log("没有找到拥有核能发电站的用户")
 		return nil
 	}
@@ -287,11 +286,11 @@ func NewsCardsFilterNO3(room *GameRoom, c *Connection) (err error) {
 func NewsCardsFilterNO4(room *GameRoom, c *Connection) (err error) {
 	var ruleNO4 MessageNewsRuleFilterNO4
 	var flag bool = false
-	for con,data := range room.Map.ClientMap{
-		for _,land:= range data{
-			if land.Role == GAME_ROLE__SEWAGE_TREATMENT{
+	for con, data := range room.Map.ClientMap {
+		for _, land := range data {
+			if land.Role == GAME_ROLE__SEWAGE_TREATMENT {
 				flag = true
-				room.Money[con] -=300
+				room.Money[con] -= 300
 				ruleNO4.Money = -300
 				ruleNO4.GameRoomId = room.Id
 				ruleNO4.Code = con.Code
@@ -300,7 +299,7 @@ func NewsCardsFilterNO4(room *GameRoom, c *Connection) (err error) {
 		}
 	}
 
-	if flag{
+	if flag {
 		golib.Log("没有找到拥有核能发电站的用户")
 		return nil
 	}
@@ -314,11 +313,11 @@ func NewsCardsFilterNO4(room *GameRoom, c *Connection) (err error) {
 func NewsCardsFilterNO5(room *GameRoom, c *Connection) (err error) {
 	var ruleNO5 MessageNewsRuleFilterNO5
 	var flag bool = false
-	for con,data := range room.Map.ClientMap{
-		for _,land:= range data{
-			if land.Role == GAME_ROLE__SEWAGE_TREATMENT{
+	for con, data := range room.Map.ClientMap {
+		for _, land := range data {
+			if land.Role == GAME_ROLE__SEWAGE_TREATMENT {
 				flag = true
-				room.Money[con] -=300
+				room.Money[con] -= 300
 				ruleNO5.Money = -300
 				ruleNO5.GameRoomId = room.Id
 				ruleNO5.Code = con.Code
@@ -327,7 +326,7 @@ func NewsCardsFilterNO5(room *GameRoom, c *Connection) (err error) {
 		}
 	}
 
-	if flag{
+	if flag {
 		golib.Log("没有找到拥有核能发电站的用户")
 		return nil
 	}
@@ -341,14 +340,14 @@ func NewsCardsFilterNO5(room *GameRoom, c *Connection) (err error) {
 //政府公开补助土地少者500元
 func NewsCardsFilterNO6(room *GameRoom, c *Connection) (err error) {
 	var min int
-	for _ ,data := range room.Map.ClientMap{
+	for _, data := range room.Map.ClientMap {
 		tempMin := len(data)
-		if tempMin < min{
+		if tempMin < min {
 			min = tempMin
 		}
 	}
-	for con,data := range room.Map.ClientMap{
-		if len(data) == min{
+	for con, data := range room.Map.ClientMap {
+		if len(data) == min {
 			room.Money[con] += 500
 		}
 	}
@@ -368,6 +367,26 @@ func NewsCardsFilterNO8(room *GameRoom, c *Connection) (err error) {
 
 //经营不善，拥有建筑公司将自己的一个地产下降一级
 func NewsCardsFilterNO9(room *GameRoom, c *Connection) (err error) {
+	var ruleNO9 MessageNewRuleFilterNO9
+
+	for con, landList := range room.Map.ClientMap {
+		for _, land := range landList {
+			if land.Role == GAME_ROLE__CONSTRUCTION_COMPANY {
+				ruleNO9.MessageType = MESSAGE_TYPE__NEWS_CARD__NO9
+				ruleNO9.Code = con.Code
+				ruleNO9.GameRoomId = room.Id
+				ruleNO9.LandList = landList
+			}
+		}
+	}
+	data, _ := json.Marshal(&ruleNO9)
+	room.Broadcast <- data
+
+	//收到确认消息后，确定是否升级土地
+	comfirmFlag := c.GetHandlerConfirmData()
+	if !comfirmFlag {
+		golib.Log("收到确认信息，降级房产\n")
+	}
 	return nil
 }
 
@@ -383,5 +402,19 @@ func NewsCardsFilterNO11(room *GameRoom, c *Connection) (err error) {
 
 //所有玩家缴纳个人所得税，每块地产300元
 func NewsCardsFilterNO12(room *GameRoom, c *Connection) (err error) {
+	var ruleNO12List []MessageNewRuleFilterNO12
+	var index int = 0
+	for con, data := range room.Map.ClientMap {
+		ruleNO12List[index].LandList = data
+		ruleNO12List[index].GameRoomId = room.Id
+		ruleNO12List[index].Code = con.Code
+		ruleNO12List[index].MessageType = MESSAGE_TYPE__NEWS_CARD__NO12
+		ruleNO12List[index].Money = int64(len(data) * 300)
+		ruleNO12List[index].Number = int64(len(data))
+		room.Money[con] -= ruleNO12List[index].Money
+	}
+
+	data, _ := json.Marshal(&ruleNO12List)
+	room.Broadcast <- data
 	return nil
 }
