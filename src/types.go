@@ -290,30 +290,49 @@ type MessageMoveStartPoint struct {
 	ConfirmResult bool   `json:"confirm_result"`
 }
 
-//规则一 推送消息
-type MessageRuleFilterNO1 struct {
+//运气卡规则一 推送消息
+type MessageLuckRuleFilterNO1 struct {
 	MessageBasicInfo
 	Money int64 `json:"money"`
 }
 
-//规则二 推送消息
-type MessageRuleFilterNO2 struct {
+//运气卡规则二 推送消息
+type MessageLuckRuleFilterNO2 struct {
 	MessageBasicInfo
 }
 
-//规则四
-type MessageRuleFilterNO4 struct {
-	MessageBasicInfo
-	Money int64 `json:"money"`
-}
-
-//规则五
-type MessageRuleFilterNO5 struct {
+//运气卡规则四
+type MessageLuckRuleFilterNO4 struct {
 	MessageBasicInfo
 	Money int64 `json:"money"`
 }
 
-type MessageRuleFilterNO6 struct {
+//运气卡规则五
+type MessageLuckRuleFilterNO5 struct {
+	MessageBasicInfo
+	Money int64 `json:"money"`
+}
+
+//运气卡规则六
+type MessageLuckRuleFilterNO6 struct {
+	MessageBasicInfo
+	Money int64 `json:"money"`
+}
+
+//运气卡规则十
+type MessageLuckRuleFilterNO10 struct {
+	MessageBasicInfo
+	Money int64 `json:"money"`
+}
+
+//运气卡规则十一
+type MessageLuckRuleFilterNO11 struct {
+	MessageBasicInfo
+	Money int64 `json:"money"`
+}
+
+
+type MessageNewsRuleFilterNO2 struct {
 	MessageBasicInfo
 	Money int64 `json:"money"`
 }

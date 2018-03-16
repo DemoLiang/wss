@@ -48,7 +48,7 @@ func LuckCardsFilterNO1(room *GameRoom, c *Connection) (err error) {
 			room.Money[c] += 300
 		}
 	}
-	var ruleNO1 MessageRuleFilterNO1
+	var ruleNO1 MessageLuckRuleFilterNO1
 	ruleNO1.MessageType = MESSAGE_TYPE__LUCK_CARD__NO1
 	ruleNO1.Code = c.Code
 	ruleNO1.GameRoomId = room.Id
@@ -63,7 +63,7 @@ func LuckCardsFilterNO1(room *GameRoom, c *Connection) (err error) {
 
 //黑历史被查，立即移动到监狱，并停留一回合
 func LuckCardsFilterNO2(room *GameRoom, c *Connection) (err error) {
-	var ruleNO2 MessageRuleFilterNO2
+	var ruleNO2 MessageLuckRuleFilterNO2
 	ruleNO2.MessageType = MESSAGE_TYPE__LUCK_CARD__NO2
 	ruleNO2.Code = c.Code
 	ruleNO2.GameRoomId = room.Id
@@ -102,7 +102,7 @@ func LuckCardsFilterNO3(room *GameRoom, c *Connection) (err error) {
 //双十一期间，疯狂消费，支付300元
 func LuckCardsFilterNO4(room *GameRoom, c *Connection) (err error) {
 
-	var ruleNO4 MessageRuleFilterNO4
+	var ruleNO4 MessageLuckRuleFilterNO4
 	room.Money[c] -= 300
 
 	ruleNO4.MessageType = MESSAGE_TYPE__LUCK_CARD__NO4
@@ -119,7 +119,7 @@ func LuckCardsFilterNO4(room *GameRoom, c *Connection) (err error) {
 
 //前往九寨沟旅游，支付500元
 func LuckCardsFilterNO5(room *GameRoom, c *Connection) (err error) {
-	var ruleNO5 MessageRuleFilterNO5
+	var ruleNO5 MessageLuckRuleFilterNO5
 	room.Money[c] -= 500
 
 	ruleNO5.MessageType = MESSAGE_TYPE__LUCK_CARD__NO5
@@ -135,7 +135,7 @@ func LuckCardsFilterNO5(room *GameRoom, c *Connection) (err error) {
 
 //潜入银行 系统内部，从每位玩家手中收取300元
 func LuckCardsFilterNO6(room *GameRoom, c *Connection) (err error) {
-	var ruleNO6 MessageRuleFilterNO6
+	var ruleNO6 MessageLuckRuleFilterNO6
 	for con, _ := range room.Money {
 		if con != c {
 			room.Money[con] -= 300
@@ -181,6 +181,7 @@ func LuckCardsFilterNO7(room *GameRoom, c *Connection) (err error) {
 //立即移动到你的左边手玩家的位置，并按该结果结算
 func LuckCardsFilterNO8(room *GameRoom, c *Connection) (err error) {
 
+
 	return nil
 }
 
@@ -192,12 +193,34 @@ func LuckCardsFilterNO9(room *GameRoom, c *Connection) (err error) {
 
 //发票刮中奖，获得400元
 func LuckCardsFilterNO10(room *GameRoom, c *Connection) (err error) {
+	var ruleNO10 MessageLuckRuleFilterNO10
+	room.Money[c] += 400
+
+	ruleNO10.MessageType = MESSAGE_TYPE__LUCK_CARD__NO10
+	ruleNO10.Code = c.Code
+	ruleNO10.GameRoomId = room.Id
+	ruleNO10.Money += 400
+
+	//广播消息到游戏房间
+	data, _ := json.Marshal(&ruleNO10)
+	room.Broadcast <- data
 
 	return nil
 }
 
 //额外获得遗产，获得600元
 func LuckCardsFilterNO11(room *GameRoom, c *Connection) (err error) {
+	var ruleNO11 MessageLuckRuleFilterNO11
+	room.Money[c] += 600
+
+	ruleNO11.MessageType = MESSAGE_TYPE__LUCK_CARD__NO11
+	ruleNO11.Code = c.Code
+	ruleNO11.GameRoomId = room.Id
+	ruleNO11.Money += 600
+
+	//广播消息到游戏房间
+	data, _ := json.Marshal(&ruleNO11)
+	room.Broadcast <- data
 
 	return nil
 }
@@ -216,6 +239,20 @@ func NewsCardsFilterNO1(room *GameRoom, c *Connection) (err error) {
 
 //社会发放福利，每位玩家获得1000元
 func NewsCardsFilterNO2(room *GameRoom, c *Connection) (err error) {
+	var ruleNO2List []MessageNewsRuleFilterNO2
+	var index int = 0
+	for c,_ := range room.Money{
+		room.Money[c] += 1000
+		ruleNO2List[index].MessageType = MESSAGE_TYPE__LUCK_CARD__NO11
+		ruleNO2List[index].Code = c.Code
+		ruleNO2List[index].GameRoomId = room.Id
+		ruleNO2List[index].Money += 1000
+		index++
+	}
+
+	//广播消息到游戏房间
+	data, _ := json.Marshal(&ruleNO2List)
+	room.Broadcast <- data
 	return nil
 }
 
