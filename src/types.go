@@ -332,7 +332,27 @@ type MessageLuckRuleFilterNO11 struct {
 }
 
 
+
+//新闻卡过滤规则二
 type MessageNewsRuleFilterNO2 struct {
+	MessageBasicInfo
+	Money int64 `json:"money"`
+}
+
+//新闻卡过滤规则三
+type MessageNewsRuleFilterNO3 struct {
+	MessageBasicInfo
+	Money int64 `json:"money"`
+}
+
+//新闻卡过滤规则四
+type MessageNewsRuleFilterNO4 struct {
+	MessageBasicInfo
+	Money int64 `json:"money"`
+}
+
+//新闻过滤规则五
+type MessageNewsRuleFilterNO5 struct {
 	MessageBasicInfo
 	Money int64 `json:"money"`
 }

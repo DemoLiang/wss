@@ -241,10 +241,10 @@ func NewsCardsFilterNO1(room *GameRoom, c *Connection) (err error) {
 func NewsCardsFilterNO2(room *GameRoom, c *Connection) (err error) {
 	var ruleNO2List []MessageNewsRuleFilterNO2
 	var index int = 0
-	for c,_ := range room.Money{
+	for con,_ := range room.Money{
 		room.Money[c] += 1000
 		ruleNO2List[index].MessageType = MESSAGE_TYPE__LUCK_CARD__NO11
-		ruleNO2List[index].Code = c.Code
+		ruleNO2List[index].Code = con.Code
 		ruleNO2List[index].GameRoomId = room.Id
 		ruleNO2List[index].Money += 1000
 		index++
@@ -258,21 +258,101 @@ func NewsCardsFilterNO2(room *GameRoom, c *Connection) (err error) {
 
 //经营不善，拥有核能发电站的玩家失去300元
 func NewsCardsFilterNO3(room *GameRoom, c *Connection) (err error) {
+	var ruleNO3 MessageNewsRuleFilterNO3
+	var flag bool = false
+	for con,data := range room.Map.ClientMap{
+		for _,land:= range data{
+			if land.Role == GAME_ROLE__NUCLEAR_POWER{
+				flag = true
+				room.Money[con] -=300
+				ruleNO3.Money = -300
+				ruleNO3.GameRoomId = room.Id
+				ruleNO3.Code = con.Code
+				ruleNO3.MessageType = MESSAGE_TYPE__NEWS_CARD__NO3
+			}
+		}
+	}
+
+	if flag{
+		golib.Log("没有找到拥有核能发电站的用户")
+		return nil
+	}
+	//广播消息到游戏房间
+	data, _ := json.Marshal(&ruleNO3)
+	room.Broadcast <- data
 	return nil
 }
 
 //经营不善，拥有污水处理厂的玩家失去300元
 func NewsCardsFilterNO4(room *GameRoom, c *Connection) (err error) {
+	var ruleNO4 MessageNewsRuleFilterNO4
+	var flag bool = false
+	for con,data := range room.Map.ClientMap{
+		for _,land:= range data{
+			if land.Role == GAME_ROLE__SEWAGE_TREATMENT{
+				flag = true
+				room.Money[con] -=300
+				ruleNO4.Money = -300
+				ruleNO4.GameRoomId = room.Id
+				ruleNO4.Code = con.Code
+				ruleNO4.MessageType = MESSAGE_TYPE__NEWS_CARD__NO4
+			}
+		}
+	}
+
+	if flag{
+		golib.Log("没有找到拥有核能发电站的用户")
+		return nil
+	}
+	//广播消息到游戏房间
+	data, _ := json.Marshal(&ruleNO4)
+	room.Broadcast <- data
 	return nil
 }
 
 //经营不善，每位拥有运输业的玩家失去300元（大陆运输，大洋运输，空中运输）
 func NewsCardsFilterNO5(room *GameRoom, c *Connection) (err error) {
+	var ruleNO5 MessageNewsRuleFilterNO5
+	var flag bool = false
+	for con,data := range room.Map.ClientMap{
+		for _,land:= range data{
+			if land.Role == GAME_ROLE__SEWAGE_TREATMENT{
+				flag = true
+				room.Money[con] -=300
+				ruleNO5.Money = -300
+				ruleNO5.GameRoomId = room.Id
+				ruleNO5.Code = con.Code
+				ruleNO5.MessageType = MESSAGE_TYPE__NEWS_CARD__NO5
+			}
+		}
+	}
+
+	if flag{
+		golib.Log("没有找到拥有核能发电站的用户")
+		return nil
+	}
+	//广播消息到游戏房间
+	data, _ := json.Marshal(&ruleNO5)
+	room.Broadcast <- data
+	return nil
 	return nil
 }
 
 //政府公开补助土地少者500元
 func NewsCardsFilterNO6(room *GameRoom, c *Connection) (err error) {
+	var min int
+	for _ ,data := range room.Map.ClientMap{
+		tempMin := len(data)
+		if tempMin < min{
+			min = tempMin
+		}
+	}
+	for con,data := range room.Map.ClientMap{
+		if len(data) == min{
+			room.Money[con] += 500
+		}
+	}
+
 	return nil
 }
 
