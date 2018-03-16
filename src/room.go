@@ -286,7 +286,14 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 				newsData, _ := json.Marshal(&newsCard)
 				room.Broadcast <- newsData
 			case GAME_ROLE__SECURITIES_CENTER:
-				//证券
+				//证券,获得你拥有投资项目数量*500元的奖励
+				var count int = 0
+				for _,land := range room.Map.ClientMap[c]{
+					if land.Role > GAME_ROLE__INVESTMENT_START && land.Role < GAME_ROLE__INVESTMENT_END{
+						count++
+					}
+				}
+				room.Money[c] += int64(count*500)
 			case GAME_ROLE__PRISION:
 				//监狱
 			case GAME_ROLE__JAIL:
@@ -376,15 +383,12 @@ func (room *GameRoom) LandRedeem(c *Connection, mapList []MapElement) {
 
 //处理运气卡，走到此处说明，说明已经是处理过了，确定了次运气卡还在游戏的堆里，只需要调用过滤函数即可
 func (room *GameRoom) HandlerLuckCards(c *Connection, luckCardNo int) (err error) {
-	RulesFilter[LUCK_CARD_TYPE_ENUM(luckCardNo)](room,c)
-
-	return nil
+	return RulesFilter[LUCK_CARD_TYPE_ENUM(luckCardNo)](room,c)
 }
 
 //处理新闻卡
 func (room *GameRoom) HandlerNewsCards(c *Connection, newCardNo int) (err error) {
-
-	return nil
+	return RulesFilter[LUCK_CARD_TYPE_ENUM(newCardNo)](room,c)
 }
 
 //判断游戏是否结束
