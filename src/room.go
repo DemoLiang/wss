@@ -322,26 +322,28 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 				//广播给房间其它的小伙伴
 				taxData,_:= json.Marshal(&tax)
 				room.Broadcast <- taxData
-			case GAME_ROLE__NUCLEAR_POWER:
+			case GAME_ROLE__NUCLEAR_POWER,
 				//核能发电
+			 	GAME_ROLE__CONSTRUCTION_COMPANY,
+				//建筑公司
+				GAME_ROLE__CONTINENTAL_TRANSPORTION,
+				//大陆运输
+				GAME_ROLE__TV_STATION,
+				//电视台
+				GAME_ROLE__AIR_TRANSPORTION,
+				//航空运输
+				GAME_ROLE__SEWAGE_TREATMENT,
+				//污水处理
+				GAME_ROLE__OCEAN_TRANSPORTION:
+				//大洋运输
 				var buyland MessageUserBuyLand
 				buyland.MessageType = GameRole2MessageType(mapLand.Role)
 				buyland.Code = c.Code
 				buyland.GameRoomId = room.Id
-				buyland.Land = *room.GetLandByRole(GAME_ROLE__NUCLEAR_POWER)
-				
-			case GAME_ROLE__CONSTRUCTION_COMPANY:
-				//建筑公司
-			case GAME_ROLE__CONTINENTAL_TRANSPORTION:
-				//大陆运输
-			case GAME_ROLE__TV_STATION:
-				//电视台
-			case GAME_ROLE__AIR_TRANSPORTION:
-				//航空运输
-			case GAME_ROLE__SEWAGE_TREATMENT:
-				//污水处理
-			case GAME_ROLE__OCEAN_TRANSPORTION:
-				//大洋运输
+				buyland.Land = *room.GetLandByRole(mapLand.Role)
+
+				data,_:=json.Marshal(&buyland)
+				room.Broadcast <- data
 			default:
 			}
 		}
