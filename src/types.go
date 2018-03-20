@@ -369,3 +369,10 @@ type MessageNewRuleFilterNO12 struct {
 	Money    int64        `json:"money"`
 	Number   int64        `json:"number"`
 }
+
+//纳税消息
+type MessageTax struct {
+	MessageBasicInfo
+	Money int64 `json:"money"`
+	LandNumber int64 `json:"land_number"`
+}

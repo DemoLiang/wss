@@ -42,6 +42,8 @@ const (
 	MESSAGE_TYPE__MOVE_2_START
 	//花费1000元旅行，移动到起点确认消息
 	MESSAGE_TYPE__MOVE_2_START_COMFIRM
+	//缴纳税
+	MESSAGE_TYPE__PAY_TAXES
 )
 
 const (

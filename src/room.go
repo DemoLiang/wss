@@ -311,8 +311,25 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 				room.Broadcast <- parkData
 			case GAME_ROLE_TAX_CENTER:
 				//税务
+				var tax MessageTax
+				tax.GameRoomId = room.Id
+				tax.MessageType =MESSAGE_TYPE__PAY_TAXES
+				tax.Code = c.Code
+				tax.Money = int64(len(room.Map.ClientMap[c]) * 300)
+				room.Money[c] = room.Money[c] - int64(len(room.Map.ClientMap[c]) * 300)
+					room.Bank = room.Bank + room.Money[c] - int64(len(room.Map.ClientMap[c]) * 300)
+
+				//广播给房间其它的小伙伴
+				taxData,_:= json.Marshal(&tax)
+				room.Broadcast <- taxData
 			case GAME_ROLE__NUCLEAR_POWER:
 				//核能发电
+				var buyland MessageUserBuyLand
+				buyland.MessageType = GameRole2MessageType(mapLand.Role)
+				buyland.Code = c.Code
+				buyland.GameRoomId = room.Id
+				buyland.Land = *room.GetLandByRole(GAME_ROLE__NUCLEAR_POWER)
+				
 			case GAME_ROLE__CONSTRUCTION_COMPANY:
 				//建筑公司
 			case GAME_ROLE__CONTINENTAL_TRANSPORTION:
@@ -439,6 +456,33 @@ func (m MapElement) IsEqual(m1 MapElement) bool {
 //获取一块地产的升级费用
 func GetLandUpdateFee(land MapElement)(fee int64){
 	return land.Fee + int64(float64(land.Level)*0.2+float64(land.Level))*land.Fee
+}
+
+//游戏消息role角色转成消息类型
+func GameRole2MessageType(role GAME_ROLES_ENUM) (msgType MESSAGE_TYPE_ENUM) {
+	switch role {
+	case GAME_ROLE__NUCLEAR_POWER:
+	case GAME_ROLE__CONSTRUCTION_COMPANY:
+	case GAME_ROLE__CONTINENTAL_TRANSPORTION:
+	case GAME_ROLE__TV_STATION:
+	case GAME_ROLE__AIR_TRANSPORTION:
+	case GAME_ROLE__SEWAGE_TREATMENT:
+	case GAME_ROLE__OCEAN_TRANSPORTION:
+		return MESSAGE_TYPE__BUY_LAND
+	}
+	
+	return 
+}
+
+//根据role角色获取map土地元素
+func (room *GameRoom)GetLandByRole(role GAME_ROLES_ENUM)(land *MapElement){
+	for _,land := range room.Map.Map{
+		if land.Role == role{
+			return &land
+		}
+	}
+
+	return nil
 }
 
 func newID() string {
