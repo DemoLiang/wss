@@ -145,8 +145,8 @@ func (room *GameRoom) GameUserMove(dice int, c *Connection) (err error) {
 	data, _ := json.Marshal(userMove)
 	room.Broadcast <- data
 
-	//TODO 移动到的位置，判断是否收租金，是否买地，是否不够钱需要抵押房产
 	room.Map.CurrentUserLocation[c] = pos
+	//移动到的位置，判断是否收租金，是否买地，是否不够钱需要抵押房产
 	room.GameDoing(c)
 
 	//判断输赢
