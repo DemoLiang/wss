@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+//获取位置信息
 func (c *Connection) GetMapLocation(p Pos, room *GameRoom) (idx int, pos Pos, err error) {
 	pos = Pos{-1, -1}
 	for idx, data := range room.Map.Map {

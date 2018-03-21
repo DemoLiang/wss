@@ -5,6 +5,7 @@ import (
 	"github.com/DemoLiang/wss/golib"
 )
 
+//初始化规则处理函数
 func InitRules() {
 	RulesFilter = map[LUCK_CARD_TYPE_ENUM]func(room *GameRoom, c *Connection) (err error){
 		LUCK_CARD_TYPE__NO1:  LuckCardsFilterNO1,
@@ -162,7 +163,7 @@ func LuckCardsFilterNO7(room *GameRoom, c *Connection) (err error) {
 	moveStartPoint.Money = 1000
 	moveStartPoint.Code = c.Code
 	moveStartPoint.GameRoomId = room.Id
-	moveStartPoint.SEQ = newID()
+	moveStartPoint.SEQ = NewID()
 
 	data, _ := json.Marshal(&moveStartPoint)
 	c.Send <- data

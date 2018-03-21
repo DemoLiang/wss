@@ -10,6 +10,7 @@ var h = Hub{
 	Connections: make(map[*Connection]bool),
 }
 
+//游戏大厅
 func (h *Hub) run() {
 	for {
 		select {

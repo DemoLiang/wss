@@ -8,8 +8,7 @@ import (
 	"sync"
 )
 
-//var GameRooms map[string]*GameRoom
-
+//新建游戏房间
 func NewGameRoom(number int) (gameRoom *GameRoom) {
 	gameRoom = &GameRoom{
 		Broadcast:       make(chan []byte),
@@ -22,7 +21,7 @@ func NewGameRoom(number int) (gameRoom *GameRoom) {
 		Bank:            INITIAL_BANK_MONEY,
 	}
 	//初始化roomid
-	gameRoom.Id = newID()
+	gameRoom.Id = NewID()
 	//启动房间注册函数
 	go gameRoom.run()
 	//初始化运气池
@@ -48,6 +47,7 @@ func (r *GameRoom) InitNewsCardMap() {
 	}
 }
 
+//运气卡
 func (r *GameRoom) LuckCard() (cardNo int) {
 	cardNo = RandNumber() % int(LUCK_CARD_TYPE__MAX-1)
 	if r.LuckCards[LUCK_CARD_TYPE_ENUM(cardNo)] == true {
@@ -69,6 +69,7 @@ func (r *GameRoom) LuckCard() (cardNo int) {
 	return cardNo
 }
 
+//新闻卡
 func (r *GameRoom) NewsCard() (cardNo int) {
 	cardNo = RandNumber() % int(NEWS_CARD_TYPE__MAX-1)
 	if r.NewsCards[NEWS_CARD_TYPE_ENUM(cardNo)] == true {
@@ -487,10 +488,12 @@ func (room *GameRoom)GetLandByRole(role GAME_ROLES_ENUM)(land *MapElement){
 	return nil
 }
 
-func newID() string {
+//生成ID
+func NewID() string {
 	return ksuid.New().String()
 }
 
+//游戏房间消息发送注册退出处理
 func (r *GameRoom) run() {
 	for {
 		select {

@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-// reader pumps messages from the websocket connection to the hub.
+//读取消息进行处理，如果没有登录服务器，用微信code交换服务器code，则关闭链接
 func (c *Connection) ReaderHandler() {
 	for {
 		_, message, err := c.Ws.ReadMessage()
@@ -22,19 +22,11 @@ func (c *Connection) ReaderHandler() {
 			golib.Log("发送信息错误，关闭连接")
 			break
 		}
-		//解析消息，此链接已经在游戏大厅，
-		// TODO 如果消息是创建，则新建房间
-		// TODO 如果是加入房间，则处理加入房间消息
-		// TODO 如果是游戏消息，则处理游戏时间，交互游戏厅消息
-
-		// TODO 全球大厅广播消息
-		//h.Broadcast <- []byte(rsp)
-		//h.Broadcast <- message
 	}
 	c.Close()
 }
 
-// write writes a message with the given message type and payload.
+//写出消息到客户端，统一以文本形式写出
 func (c *Connection) WriterHandler() {
 	for message := range c.Send {
 		err := c.Ws.WriteMessage(websocket.TextMessage, message)
@@ -57,7 +49,7 @@ func ConnHandler(c *Connection) {
 	go c.ReaderHandler()
 }
 
-// wsHandler handles websocket requests from the peer.
+//HTTP请求升级为websocket请求
 func WsHandler(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {

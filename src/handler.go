@@ -8,11 +8,13 @@ import (
 	"time"
 )
 
+//摇骰子，生成小于等于6的随机数
 func ShakeDice() (dice int) {
 	dice = RandNumber() % 6
 	return dice
 }
 
+//生成随机数
 func RandNumber() (number int) {
 	source := rand.NewSource(time.Now().Unix())
 	r := rand.New(source)
@@ -20,6 +22,7 @@ func RandNumber() (number int) {
 	return
 }
 
+//总体处理所有消息
 func (c *Connection) HandlerMessage(data []byte) (err error) {
 	var messageBasicInfo MessageBasicInfo
 	json.Unmarshal(data, &messageBasicInfo)
