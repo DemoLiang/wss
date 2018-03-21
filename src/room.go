@@ -30,7 +30,7 @@ func NewGameRoom(number int) (gameRoom *GameRoom) {
 	gameRoom.InitNewsCardMap()
 	//初始化地图
 	gameRoom.InitGameMap()
-
+	//初始化房间状态为可用状态
 	gameRoom.SetRoomStatus(GAMEROOM_STATUS__ENABLE)
 	return
 }

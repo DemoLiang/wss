@@ -56,6 +56,8 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 		gameRoom := NewGameRoom(createRoom.Number)
 		//向房间注册用户
 		gameRoom.Register <- c
+		//初始化房主
+		gameRoom.Homeowner = c.Session
 		//向游戏大厅注册房间
 		h.RegisterRoom <- gameRoom
 		//返回游戏房间信息给前端
@@ -77,15 +79,15 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 	case MESSAGE_TYPE__GAME_START:
 		var gameStart MessageGameStart
 		json.Unmarshal(data, &gameStart)
-
-		//TODO 需要判断是否房主发起的开始游戏
-
 		//获取房间
 		gameRoom := GetGameRoomById(gameStart.GameRoomId)
-
+		//判断请求开始游戏的人是谁
+		if c.Session != gameRoom.Homeowner{
+			golib.Log("不是房主，不能开始游戏")
+			return nil
+		}
 		//把房间变为不可用，游戏开始
 		gameRoom.SetRoomStatus(GAMEROOM_STATUS__GAMESTART)
-
 		//返回前端房间信息,客户端信息
 		gameStart.ClientInfoList = GetGameRoomClientInfo(gameStart.GameRoomId)
 		data, _ := json.Marshal(gameStart)

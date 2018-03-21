@@ -92,6 +92,9 @@ type GameRoom struct {
 
 	//某些规则会出发停留，停留的需要放入停留的
 	StopStep map[*Connection]int
+
+	//房主，对应cient的code信息
+	Homeowner string
 }
 
 type MapElement struct {
