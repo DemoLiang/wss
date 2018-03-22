@@ -5,6 +5,7 @@ import (
 	"github.com/DemoLiang/wss/golib"
 	"github.com/gorilla/websocket"
 	"net/http"
+	"encoding/json"
 )
 
 //读取消息进行处理，如果没有登录服务器，用微信code交换服务器code，则关闭链接
@@ -68,4 +69,11 @@ func WsHandler(w http.ResponseWriter, r *http.Request) {
 func (c *Connection) Close() {
 	c.Ws.Close()
 	h.Unregister <- c
+}
+
+//客户端发送消息
+func (c *Connection) SendMessage(data interface{}) (err error) {
+	dataByte,_ := json.Marshal(&data)
+	c.Send <- dataByte
+	return nil
 }

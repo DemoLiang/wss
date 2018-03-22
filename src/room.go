@@ -221,10 +221,8 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 						land.GameRoomId = room.Id
 						land.MessageType = MESSAGE_TYPE__LAND_UPDATE
 						land.Number = 1
-						confirmData, _ = json.Marshal(land)
-
-						//发送消息，确认是否操作
-						c.Send <- confirmData
+						//发送确认消息到客户端，是否升级
+						c.SendMessage(&land)
 
 						//收到确认消息后，确定是否升级土地
 						comfirmFlag := c.GetHandlerConfirmData()
@@ -241,8 +239,9 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 						land.Land = room.Map.ClientMap[con][index]
 						land.MessageType = MESSAGE_TYPE__PAY_RENT_FEE
 						land.LandImpawn = room.Map.ClientMap[c]
-						confirmData, _ = json.Marshal(land)
-						c.Send <- confirmData
+
+						//发送确认消息到客户端，是否升级
+						c.SendMessage(&land)
 
 						//如果缴纳租金后，余额小于0，则需要抵押
 						if room.Money[c] < 0 {
@@ -261,8 +260,9 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 					land.GameRoomId = room.Id
 					land.MessageType = MESSAGE_TYPE__BUY_LAND
 
-					confirmData, _ = json.Marshal(land)
-					c.Send <- confirmData
+					//发送确认消息到客户端，是否升级
+					c.SendMessage(&land)
+
 					//收到确认消息后，确定购买地产
 					comfirmFlag := c.GetHandlerConfirmData()
 					if comfirmFlag {
@@ -276,11 +276,10 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 				luckCardNo := room.LuckCard()
 				luckCard.LuckCardNo = luckCardNo
 				luckCard.MessageType = MESSAGE_TYPE__LUCK_CARD
-				luckData, _ := json.Marshal(&luckCard)
 				//处理运气牌
 				room.HandlerLuckCards(c, luckCard.LuckCardNo)
 				//广播给房间其它的小伙伴
-				room.Broadcast <- luckData
+				room.BroadcastMessage(&luckCard)
 			case GAME_ROLE__NEWS:
 				//新闻
 				var newsCard MessageGameNewsCard
@@ -291,8 +290,7 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 				//处理新闻牌
 				room.HandlerNewsCards(c, newsCard.NewsCardNo)
 				//广播给房间其它的小伙伴
-				newsData, _ := json.Marshal(&newsCard)
-				room.Broadcast <- newsData
+				room.BroadcastMessage(&newsCard)
 			case GAME_ROLE__SECURITIES_CENTER:
 				//证券,获得你拥有投资项目数量*500元的奖励
 				var count int = 0
@@ -315,8 +313,7 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 				park.Money = 300
 				room.Money[c] += 300
 				//广播给房间其它的小伙伴
-				parkData, _ := json.Marshal(&park)
-				room.Broadcast <- parkData
+				room.BroadcastMessage(&park)
 			case GAME_ROLE_TAX_CENTER:
 				//税务
 				var tax MessageTax
@@ -328,8 +325,7 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 					room.Bank = room.Bank + room.Money[c] - int64(len(room.Map.ClientMap[c]) * 300)
 
 				//广播给房间其它的小伙伴
-				taxData,_:= json.Marshal(&tax)
-				room.Broadcast <- taxData
+				room.BroadcastMessage(&tax)
 			case GAME_ROLE__NUCLEAR_POWER,
 				//核能发电
 			 	GAME_ROLE__CONSTRUCTION_COMPANY,
@@ -349,9 +345,8 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 				buyland.Code = c.Code
 				buyland.GameRoomId = room.Id
 				buyland.Land = *room.GetLandByRole(mapLand.Role)
-
-				data,_:=json.Marshal(&buyland)
-				room.Broadcast <- data
+				//广播给房间其它小伙伴
+				room.BroadcastMessage(&buyland)
 			default:
 			}
 		}
