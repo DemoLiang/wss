@@ -142,8 +142,8 @@ func (room *GameRoom) GameUserMove(dice int, c *Connection) (err error) {
 	userMove.MoveStep = dice
 	userMove.MovePos = pos
 	userMove.GameRoomId = room.Id
-	data, _ := json.Marshal(userMove)
-	room.Broadcast <- data
+	//广播消息
+	room.BroadcastMessage(&userMove)
 
 	room.Map.CurrentUserLocation[c] = pos
 	//移动到的位置，判断是否收租金，是否买地，是否不够钱需要抵押房产
@@ -161,6 +161,13 @@ func (room *GameRoom) GameUserMove(dice int, c *Connection) (err error) {
 		room.Broadcast <- data
 	}
 
+	return nil
+}
+
+//广播消息到房间
+func (room *GameRoom)BroadcastMessage(data interface{})(err error)  {
+	dataByte, _ := json.Marshal(data)
+	room.Broadcast <- dataByte
 	return nil
 }
 
