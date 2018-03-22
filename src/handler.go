@@ -33,6 +33,7 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 
 	switch messageBasicInfo.MessageType {
 	case MESSAGE_TYPE__LOGIN_SERVER:
+		//连接server,微信登录换取服务器登录
 		var login MessageLogin
 		var openid, session_key string
 		json.Unmarshal(data, &login)
@@ -50,6 +51,7 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 		h.Register <- c
 		golib.Log("c.Code:%v c.Openid:%v c.Session:%v\n", c.Code, c.OpenId, c.Session)
 	case MESSAGE_TYPE__CREATE_ROOM:
+		//创建房间
 		var createRoom MessageCreateRoom
 		json.Unmarshal(data, &createRoom)
 		//新建房间
@@ -64,6 +66,7 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 		data, _ := json.Marshal(createRoom)
 		c.Send <- data
 	case MESSAGE_TYPE__JOIN_ROOM:
+		//加入房间
 		var joinRoom MessageJoinRoom
 		json.Unmarshal(data, &joinRoom)
 		//获取房间
@@ -77,6 +80,7 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 		//广播消息到房间所有的用户
 		gameRoom.Broadcast <- data
 	case MESSAGE_TYPE__GAME_START:
+		//开始游戏
 		var gameStart MessageGameStart
 		json.Unmarshal(data, &gameStart)
 		//获取房间
@@ -95,6 +99,7 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 		//广播消息到房间的所有用户
 		gameRoom.Broadcast <- data
 	case MESSAGE_TYPE__SHAKE_DICE:
+		//摇骰子
 		var shakeDice MessageGameShakeDice
 		json.Unmarshal(data, &shakeDice)
 		//获取房间信息
@@ -143,6 +148,8 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 		json.Unmarshal(data, &updateLandConfirm)
 		room := GetGameRoomById(updateLandConfirm.GameRoomId)
 		room.UpdateLand(c, updateLandConfirm.Land)
+		//广播消息
+		room.BroadcastMessage(&updateLandConfirm)
 	case MESSAGE_TYPE__LOGOUT:
 		//退出房间
 		var logout MessageLogoutRoom
@@ -154,6 +161,8 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 		room.Map.Map = append(room.Map.Map,room.Map.ClientMap[c]...)
 		//归还钱
 		room.Bank += room.Money[c]
+		//广播消息给其它客户端
+		room.BroadcastMessage(&logout)
 	default:
 		golib.Log("default unknown message：%s\n",data)
 	}
