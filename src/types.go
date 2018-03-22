@@ -379,3 +379,8 @@ type MessageTax struct {
 	Money int64 `json:"money"`
 	LandNumber int64 `json:"land_number"`
 }
+
+//退出房间
+type MessageLogoutRoom struct {
+	MessageBasicInfo
+}

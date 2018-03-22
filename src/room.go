@@ -508,9 +508,8 @@ func (r *GameRoom) run() {
 		case c := <-r.Unregister:
 			if _, ok := r.Connections[c]; ok {
 				r.Connections[c] = false
-				//FIXME 回收地产
-				//FIXME 重置为起点
-				//FIXME 回收钱
+				//TODO 如果是在游戏中的退出，则就需要：回收地产、重置为起点、回收钱，
+				//TODO 如果是已经破产的退出游戏，则就不需要
 				delete(r.Connections, c)
 				close(c.Send)
 			}

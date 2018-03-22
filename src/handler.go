@@ -111,6 +111,7 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 		//摇动完骰子，置为可用
 		gameRoom.SetRoomStatus(GAMEROOM_STATUS__DICE_AVAILABLE)
 	case MESSAGE_TYPE__LAND_IMPAWN:
+		//抵押地产
 		var landImpawn MessageUserLandImpawn
 		json.Unmarshal(data, &landImpawn)
 		gameRoom := GetGameRoomById(landImpawn.GameRoomId)
@@ -121,6 +122,7 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 		//通知正在处理业务的端，已经确认抵押，可以进行下一步
 		c.ConfirDataChan <- true
 	case MESSAGE_TYPE__LAND_REDEEM:
+		//赎回地产
 		var landRedeem MessageUserLandRedeem
 		json.Unmarshal(data, &landRedeem)
 		gameRoom := GetGameRoomById(landRedeem.GameRoomId)
@@ -129,18 +131,31 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 		//广播给房间的其它小伙伴，其进行了地产赎回
 		gameRoom.Broadcast <- data
 	case MESSAGE_TYPE__BUY_LAND_CONFIRM:
+		//确认买地产
 		var buyLandConfirm MessageBuyLandConfirm
 		json.Unmarshal(data, &buyLandConfirm)
 		room := GetGameRoomById(buyLandConfirm.GameRoomId)
 		room.BuyLand(c, buyLandConfirm.Land)
 		c.ConfirDataChan <- buyLandConfirm.Confirem
 	case MESSAGE_TYPE__LAND_UPDATE_CONFIRM:
+		//确认升级地产
 		var updateLandConfirm MessageUpdateLandConfirm
 		json.Unmarshal(data, &updateLandConfirm)
 		room := GetGameRoomById(updateLandConfirm.GameRoomId)
 		room.UpdateLand(c, updateLandConfirm.Land)
+	case MESSAGE_TYPE__LOGOUT:
+		//退出房间
+		var logout MessageLogoutRoom
+		json.Unmarshal(data,&logout)
+		room := GetGameRoomById(logout.GameRoomId)
+		room.RoomStatusLock.Lock()
+		defer room.RoomStatusLock.Unlock()
+		//归还地产
+		room.Map.Map = append(room.Map.Map,room.Map.ClientMap[c]...)
+		//归还钱
+		room.Bank += room.Money[c]
 	default:
-		//golib.Log("default unknown message")
+		golib.Log("default unknown message：%s\n",data)
 	}
 	return nil
 }

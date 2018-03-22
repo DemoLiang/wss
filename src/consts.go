@@ -44,6 +44,8 @@ const (
 	MESSAGE_TYPE__MOVE_2_START_COMFIRM
 	//缴纳税
 	MESSAGE_TYPE__PAY_TAXES
+	//退出房间
+	MESSAGE_TYPE__LOGOUT
 )
 
 const (
