@@ -73,7 +73,7 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 		//返回前端房间信息,客户端信息
 		joinRoom.ClientInfoList = GetGameRoomClientInfo(joinRoom.GameRoomId)
 		data, _ := json.Marshal(joinRoom)
-		c.Send <- data
+		//c.Send <- data
 		//广播消息到房间所有的用户
 		gameRoom.Broadcast <- data
 	case MESSAGE_TYPE__GAME_START:
@@ -91,7 +91,7 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 		//返回前端房间信息,客户端信息
 		gameStart.ClientInfoList = GetGameRoomClientInfo(gameStart.GameRoomId)
 		data, _ := json.Marshal(gameStart)
-		c.Send <- data
+		//c.Send <- data
 		//广播消息到房间的所有用户
 		gameRoom.Broadcast <- data
 	case MESSAGE_TYPE__SHAKE_DICE:
@@ -110,26 +110,6 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 		gameRoom.GameUserMove(dice, c)
 		//摇动完骰子，置为可用
 		gameRoom.SetRoomStatus(GAMEROOM_STATUS__DICE_AVAILABLE)
-	//case MESSAGE_TYPE__LUCK_CARD:
-	//	var luckCard MessageGameLuckCard
-	//	json.Unmarshal(data, &luckCard)
-	//	gameRoom := GetGameRoomById(luckCard.GameRoomId)
-	//	luckCardNo := gameRoom.LuckCard()
-	//	luckCard.LuckCardNo = luckCardNo
-	//	data, _ := json.Marshal(&luckCard)
-	//	//广播给房间其它的小伙伴
-	//	gameRoom.Broadcast <- data
-	//case MESSAGE_TYPE__NEWS_CARD:
-	//	var newsCard MessageGameNewsCard
-	//	json.Unmarshal(data, &newsCard)
-	//	gameRoom := GetGameRoomById(newsCard.GameRoomId)
-	//	newsCardNo := gameRoom.NewsCard()
-	//	newsCard.NewsCardNo = newsCardNo
-	//	data, _ := json.Marshal(&newsCard)
-	//	//广播给房间其它的小伙伴
-	//	gameRoom.Broadcast <- data
-	//case MESSAGE_TYPE__GAME_USER_MOVE:
-	//	//
 	case MESSAGE_TYPE__LAND_IMPAWN:
 		var landImpawn MessageUserLandImpawn
 		json.Unmarshal(data, &landImpawn)
