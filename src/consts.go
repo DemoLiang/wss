@@ -78,6 +78,9 @@ const (
 	MESSAGE_TYPE__NEWS_CARD__NO12
 )
 
+
+type CARD_TYPE_ENUM int
+
 type LUCK_CARD_TYPE_ENUM int
 
 const (

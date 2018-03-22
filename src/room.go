@@ -200,7 +200,6 @@ func (room *GameRoom) SetRoomStatus(roomStatus GAMEROOM_STATUS_ENUM) {
 
 //用户掷完骰子后，检查需要做的动作，比如：付租金，买地，升级地产，抵押地产来付租金，
 func (room *GameRoom) GameDoing(c *Connection) (err error) {
-	var confirmData []byte
 	for con, data := range room.Map.ClientMap {
 		for index, mapLand := range data {
 			switch mapLand.Role {
@@ -405,12 +404,12 @@ func (room *GameRoom) LandRedeem(c *Connection, mapList []MapElement) {
 
 //处理运气卡，走到此处说明，说明已经是处理过了，确定了次运气卡还在游戏的堆里，只需要调用过滤函数即可
 func (room *GameRoom) HandlerLuckCards(c *Connection, luckCardNo int) (err error) {
-	return RulesFilter[LUCK_CARD_TYPE_ENUM(luckCardNo)](room,c)
+	return LuckRulesFilter[LUCK_CARD_TYPE_ENUM(luckCardNo)](room,c)
 }
 
 //处理新闻卡
 func (room *GameRoom) HandlerNewsCards(c *Connection, newCardNo int) (err error) {
-	return RulesFilter[LUCK_CARD_TYPE_ENUM(newCardNo)](room,c)
+	return LuckRulesFilter[LUCK_CARD_TYPE_ENUM(newCardNo)](room,c)
 }
 
 //判断游戏是否结束

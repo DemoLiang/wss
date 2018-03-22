@@ -7,7 +7,7 @@ import (
 
 //初始化规则处理函数
 func InitRules() {
-	RulesFilter = map[LUCK_CARD_TYPE_ENUM]func(room *GameRoom, c *Connection) (err error){
+	LuckRulesFilter = map[LUCK_CARD_TYPE_ENUM]func(room *GameRoom, c *Connection) (err error){
 		LUCK_CARD_TYPE__NO1:  LuckCardsFilterNO1,
 		LUCK_CARD_TYPE__NO2:  LuckCardsFilterNO2,
 		LUCK_CARD_TYPE__NO3:  LuckCardsFilterNO3,
@@ -20,7 +20,8 @@ func InitRules() {
 		LUCK_CARD_TYPE__NO10: LuckCardsFilterNO10,
 		LUCK_CARD_TYPE__NO11: LuckCardsFilterNO11,
 		LUCK_CARD_TYPE__NO12: LuckCardsFilterNO12,
-
+	}
+	NewsRulesFilter = map[NEWS_CARD_TYPE_ENUM]func(room *GameRoom,c *Connection)(err error){
 		NEWS_CARD_TYPE__NO1:  NewsCardsFilterNO1,
 		NEWS_CARD_TYPE__NO2:  NewsCardsFilterNO2,
 		NEWS_CARD_TYPE__NO3:  NewsCardsFilterNO3,
@@ -35,6 +36,8 @@ func InitRules() {
 		NEWS_CARD_TYPE__NO12: NewsCardsFilterNO12,
 	}
 }
+
+
 
 //运气卡处理函数
 //遗失钱包，你失去300元，位于你后方的第一位玩家获得300元
