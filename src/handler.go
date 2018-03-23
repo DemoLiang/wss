@@ -63,8 +63,8 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 		//向游戏大厅注册房间
 		h.RegisterRoom <- gameRoom
 		//返回游戏房间信息给前端
-		data, _ := json.Marshal(createRoom)
-		c.Send <- data
+		c.SendMessage(&createRoom)
+
 	case MESSAGE_TYPE__JOIN_ROOM:
 		//加入房间
 		var joinRoom MessageJoinRoom
@@ -75,10 +75,7 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 		gameRoom.Register <- c
 		//返回前端房间信息,客户端信息
 		joinRoom.ClientInfoList = GetGameRoomClientInfo(joinRoom.GameRoomId)
-		data, _ := json.Marshal(joinRoom)
-		//c.Send <- data
-		//广播消息到房间所有的用户
-		gameRoom.Broadcast <- data
+		gameRoom.BroadcastMessage(&joinRoom)
 	case MESSAGE_TYPE__GAME_START:
 		//开始游戏
 		var gameStart MessageGameStart
@@ -94,10 +91,7 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 		gameRoom.SetRoomStatus(GAMEROOM_STATUS__GAMESTART)
 		//返回前端房间信息,客户端信息
 		gameStart.ClientInfoList = GetGameRoomClientInfo(gameStart.GameRoomId)
-		data, _ := json.Marshal(gameStart)
-		//c.Send <- data
-		//广播消息到房间的所有用户
-		gameRoom.Broadcast <- data
+		gameRoom.BroadcastMessage(&gameStart)
 	case MESSAGE_TYPE__SHAKE_DICE:
 		//摇骰子
 		var shakeDice MessageGameShakeDice
