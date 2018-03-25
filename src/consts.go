@@ -48,6 +48,7 @@ const (
 	MESSAGE_TYPE__LOGOUT
 )
 
+//运气卡消息
 const (
 	_ MESSAGE_TYPE_ENUM = 8000 + iota
 	MESSAGE_TYPE__LUCK_CARD__NO1
@@ -64,6 +65,7 @@ const (
 	MESSAGE_TYPE__LUCK_CARD__NO12
 )
 
+//新闻卡消息
 const (
 	_ MESSAGE_TYPE_ENUM = 9000 + iota
 	MESSAGE_TYPE__NEWS_CARD__NO1
