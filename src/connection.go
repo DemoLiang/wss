@@ -32,7 +32,7 @@ func (c *Connection) WriterHandler() {
 	for message := range c.Send {
 		err := c.Ws.WriteMessage(websocket.TextMessage, message)
 		if err != nil {
-			golib.Log(err.Error())
+			golib.Log("write message to client error:%v",err.Error())
 			break
 		}
 	}
