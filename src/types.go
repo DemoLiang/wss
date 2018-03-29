@@ -95,6 +95,9 @@ type GameRoom struct {
 
 	//房主，对应cient的code信息
 	Homeowner string
+
+	//监狱
+	Prision map[*Connection]int
 }
 
 type MapElement struct {
@@ -383,4 +386,11 @@ type MessageTax struct {
 //退出房间
 type MessageLogoutRoom struct {
 	MessageBasicInfo
+}
+
+//出现
+type MessageError struct {
+	MessageBasicInfo
+	ErrorCode int `json:"error_code"`
+	ErrorDesc string `json:"error_desc"`
 }

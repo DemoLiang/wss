@@ -301,8 +301,13 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 				room.Money[c] += int64(count*500)
 			case GAME_ROLE__PRISION:
 				//监狱
+				room.Prision[c] = room.MaxClientNumber
 			case GAME_ROLE__JAIL:
 				//入狱
+				//TODO 需要移动用户的位置到监狱的位置POS
+				pos := Pos{LocationX:mapLand.LocationX,LocationY:mapLand.LocationY}
+				room.GameUserPosMoveToDest(c,pos)
+				room.Prision[c] = room.MaxClientNumber
 			case GAME_ROLE_PARK:
 				//公园
 				var park MessageMove2Park
@@ -487,6 +492,10 @@ func (room *GameRoom)GetLandByRole(role GAME_ROLES_ENUM)(land *MapElement){
 	}
 
 	return nil
+}
+
+func (room *GameRoom)GameUserPosMoveToDest(c *Connection,pos Pos)  {
+
 }
 
 //生成ID

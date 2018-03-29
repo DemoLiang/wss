@@ -45,7 +45,6 @@ func main() {
 	for idx, data := range InitialGameMap.Map {
 		golib.Log("%v %v\n", idx, data)
 	}
-	//golib.Log("InitialGameMap:%v\n", InitialGameMap)
 
 	//注册规则处理函数
 	InitRules()

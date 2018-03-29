@@ -98,6 +98,18 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 		json.Unmarshal(data, &shakeDice)
 		//获取房间信息
 		gameRoom := GetGameRoomById(shakeDice.GameRoomId)
+		//TODO 判断用户是否在监狱，如果在监狱，则不允许摇动骰子，如果已经在监狱
+		if value,ok :=gameRoom.Prision[c];ok && value >0{
+			golib.Log("用户还在监狱，不能摇骰子，不能移动：%v",value)
+			var msgErr MessageError
+			 msgErr.GameRoomId = gameRoom.Id
+			 msgErr.Code = c.Code
+			 msgErr.MessageType = MESSAGE_TYPE__ERROR
+			 msgErr.ErrorDesc = "位于监狱，不能摇骰子"
+			 gameRoom.BroadcastMessage(&msgErr)
+			return
+		}
+		//TODO 如果是此时的规则为后退，则把骰子置为负数，则往后退
 		//摇动骰子
 		dice := ShakeDice()
 		shakeDice.DiceNumber = dice

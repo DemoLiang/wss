@@ -46,6 +46,8 @@ const (
 	MESSAGE_TYPE__PAY_TAXES
 	//退出房间
 	MESSAGE_TYPE__LOGOUT
+	//错误消息
+	MESSAGE_TYPE__ERROR
 )
 
 //运气卡消息
