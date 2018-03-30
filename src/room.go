@@ -304,9 +304,9 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 				room.Prision[c] = room.MaxClientNumber
 			case GAME_ROLE__JAIL:
 				//入狱
-				//TODO 需要移动用户的位置到监狱的位置POS
+				//TODO 需要移动用户的位置到监狱的位置POS,并暂停一个回合
 				pos := Pos{LocationX:mapLand.LocationX,LocationY:mapLand.LocationY}
-				room.GameUserPosMoveToDest(c,pos)
+				room.GameUserPosMoveToPos(c,pos)
 				room.Prision[c] = room.MaxClientNumber
 			case GAME_ROLE_PARK:
 				//公园
@@ -494,8 +494,27 @@ func (room *GameRoom)GetLandByRole(role GAME_ROLES_ENUM)(land *MapElement){
 	return nil
 }
 
-func (room *GameRoom)GameUserPosMoveToDest(c *Connection,pos Pos)  {
+//变更客户端位置
+func (room *GameRoom)GameUserPosMoveToPos(c *Connection,pos Pos)  (err error){
+	//变更位置
+	room.Map.CurrentUserLocation[c] = pos
+	//暂停移动
+	room.Prision[c] = room.MaxClientNumber
+	return nil
+}
 
+//重新计算监狱停留回合
+func (room *GameRoom)DescPrision(c *Connection)(err error)  {
+
+	for con,step := range room.Prision{
+		if step >0 {
+			room.Prision[con]--
+		}else{
+			delete(room.Prision,con)
+		}
+	}
+
+	return nil
 }
 
 //生成ID
