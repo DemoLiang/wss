@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"github.com/DemoLiang/wss/golib"
+	"math"
 )
 
 //初始化规则处理函数
@@ -305,6 +306,34 @@ func LuckCardsFilterNO12(room *GameRoom, c *Connection) (err error) {
 //新闻卡处理函数
 //TODO 投资项目分红，距离证券中心最近的玩家获得500元
 func NewsCardsFilterNO1(room *GameRoom, c *Connection) (err error) {
+	var cIndex ,conIndex int
+	var stepList map[*Connection]int
+	var minStep int
+	//计算距离证券中心的位置
+	land := room.GetLandByRole(GAME_ROLE__SECURITIES_CENTER)
+	for _,userLocation := range room.Map.CurrentUserLocation {
+		for idx, data := range room.Map.Map {
+			if userLocation.Pos.IsEqual(Pos{LocationX: data.LocationX, LocationY: data.LocationY}) {
+				cIndex = idx
+			}
+			if land.LocationX == data.LocationX && land.LocationY == data.LocationY && data.Role == GAME_ROLE__SECURITIES_CENTER {
+				conIndex = idx
+			}
+			if minStep >= int(math.Abs(float64(cIndex-conIndex))){
+				minStep = int(math.Abs(float64(cIndex-conIndex)))
+			}
+			stepList[userLocation.C] = int(math.Abs(float64(cIndex-conIndex)))
+
+		}
+	}
+	//从银行派钱
+	for c,step := range stepList{
+		if step == minStep{
+			room.Money[c] += 500
+			room.Bank -= 500
+		}
+	}
+
 	return nil
 }
 
