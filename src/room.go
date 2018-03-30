@@ -112,11 +112,19 @@ func GetGameRoomClientInfo(id string) (ClientInfoList []ClientInfo) {
 //房间内的游戏用户移动其摇到的骰子的距离
 func (room *GameRoom) GameUserMove(dice int, c *Connection) (err error) {
 	var dstDice int = dice
-	var ok bool
+	//var ok bool
 	var pos Pos
+	var userLocationIndex int
+	//var userLocation UserLocationMap
 
+	for idx,data := range room.Map.CurrentUserLocation{
+		if data.C == c{
+			pos = Pos{LocationX:data.LocationX,LocationY:data.LocationY}
+			userLocationIndex = idx
+		}
+	}
 	//获取移动的目标位置点
-	if pos, ok = room.Map.CurrentUserLocation[c]; ok {
+	//if pos, ok = room.Map.CurrentUserLocation[c]; ok {
 		idx, _, err := c.GetMapLocation(pos, room)
 		if err != nil {
 			return errors.New("move error")
@@ -135,7 +143,7 @@ func (room *GameRoom) GameUserMove(dice int, c *Connection) (err error) {
 		//更新坐标点位置
 		pos.LocationX = mapPos.LocationX
 		pos.LocationY = mapPos.LocationY
-	}
+	//}
 	//广播移动的目标位置点
 	var userMove MessageGameUserMove
 	userMove.MessageType = MESSAGE_TYPE__GAME_USER_MOVE
@@ -145,7 +153,7 @@ func (room *GameRoom) GameUserMove(dice int, c *Connection) (err error) {
 	//广播消息
 	room.BroadcastMessage(&userMove)
 
-	room.Map.CurrentUserLocation[c] = pos
+	room.Map.CurrentUserLocation[userLocationIndex].Pos = pos
 	//移动到的位置，判断是否收租金，是否买地，是否不够钱需要抵押房产
 	room.GameDoing(c)
 
@@ -205,7 +213,8 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 			switch mapLand.Role {
 			case GAME_ROLE__LAND:
 				//过路/自己的地，需要支付租金/升级地产
-				if room.Map.CurrentUserLocation[c].IsEqual(Pos{mapLand.LocationX, mapLand.LocationY}) {
+				userLocation := room.GetUserLocation(c)
+				if userLocation.Pos.IsEqual(Pos{mapLand.LocationX, mapLand.LocationY}) {
 					if con == c {
 						//自己的地，确认是否升级地产
 						if room.Map.ClientMap[con][index].Level == int(LAND_LEVEL__MAX) {
@@ -497,7 +506,11 @@ func (room *GameRoom)GetLandByRole(role GAME_ROLES_ENUM)(land *MapElement){
 //变更客户端位置
 func (room *GameRoom)GameUserPosMoveToPos(c *Connection,pos Pos)  (err error){
 	//变更位置
-	room.Map.CurrentUserLocation[c] = pos
+	for idx,data := range room.Map.CurrentUserLocation{
+		if data.C == c{
+			room.Map.CurrentUserLocation[idx].Pos = pos
+		}
+	}
 	//暂停移动
 	room.Prision[c] = room.MaxClientNumber
 	return nil
@@ -517,6 +530,16 @@ func (room *GameRoom)DescPrision(c *Connection)(err error)  {
 	return nil
 }
 
+//根据用户c 获取房间内的用户的当前位置
+func (room *GameRoom)GetUserLocation(c *Connection)  (location *UserLocationMap){
+	for _,location:= range room.Map.CurrentUserLocation{
+		if location.C == c{
+			return &location
+		}
+	}
+	return nil
+}
+
 //生成ID
 func NewID() string {
 	return ksuid.New().String()
@@ -532,7 +555,7 @@ func (r *GameRoom) run() {
 			//初始化钱
 			r.Money[c] = INITIAL_MONEY
 			//初始化位置到起点
-			r.Map.CurrentUserLocation[c] = Pos{LocationX: r.Map.Map[0].LocationX, LocationY: r.Map.Map[0].LocationY}
+			r.Map.CurrentUserLocation =append(r.Map.CurrentUserLocation ,UserLocationMap{C:c,Pos:Pos{LocationX: r.Map.Map[0].LocationX, LocationY: r.Map.Map[0].LocationY}})
 		case c := <-r.Unregister:
 			if _, ok := r.Connections[c]; ok {
 				r.Connections[c] = false

@@ -118,7 +118,8 @@ type Pos struct {
 
 type GameMap struct {
 	//用户当前所在的位置
-	CurrentUserLocation map[*Connection]Pos
+	//CurrentUserLocation map[*Connection]Pos
+	CurrentUserLocation []UserLocationMap
 
 	//每个client用户拥有的地产
 	ClientMap map[*Connection][]MapElement `json:"client_map"`
@@ -136,6 +137,11 @@ type ClientInfo struct {
 
 	//session
 	Session string
+}
+
+type UserLocationMap struct {
+	C *Connection
+	Pos
 }
 
 //基础信息
