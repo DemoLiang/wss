@@ -184,6 +184,41 @@ func LuckCardsFilterNO7(room *GameRoom, c *Connection) (err error) {
 
 //FIXME 立即移动到你的左边手玩家的位置，并按该结果结算 需要修改，map不保证顺序性，可以改为数组形式
 func LuckCardsFilterNO8(room *GameRoom, c *Connection) (err error) {
+	var dice int
+	var cPos,conPos Pos
+	var cIdx int
+	var cStepFlag bool
+	//找到自己的位置，和右边下一个人的位置
+	for idx,location := range room.Map.CurrentUserLocation{
+		//先找到 c 的位置
+		if location.C == c{
+			cPos = location.Pos
+			cIdx = idx
+			break
+		}
+	}
+	if cIdx < 1 {
+		conPos = room.Map.CurrentUserLocation[cIdx-1].Pos
+	}else {
+		conPos = room.Map.CurrentUserLocation[room.MaxClientNumber-1].Pos
+
+	}
+	for _,data:=range room.Map.Map{
+		if cPos.IsEqual(Pos{LocationX:data.LocationX,LocationY:data.LocationY}){
+			cStepFlag = true
+		}else {
+			if cStepFlag{
+				dice++
+			}
+		}
+		if conPos.IsEqual(Pos{LocationX:data.LocationX,LocationY:data.LocationY}){
+			break
+		}
+	}
+
+	//根据计算的step移动
+	room.GameUserMove(dice,c)
+
 	return nil
 }
 
