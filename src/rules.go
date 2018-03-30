@@ -463,6 +463,7 @@ func NewsCardsFilterNO7(room *GameRoom, c *Connection) (err error) {
 
 //TODO 全体玩家参加狂欢节，在你下次行动结束前，所有玩家移动移动时都变为后退
 func NewsCardsFilterNO8(room *GameRoom, c *Connection) (err error) {
+	room.Direction = GAME_DIRETION__LEFT
 	return nil
 }
 

@@ -122,6 +122,10 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 		//广播给房间其它的小伙伴
 		gameRoom.Broadcast <- data
 		gameRoom.SetRoomStatus(GAMEROOM_STATUS__DICE_DISAVAILABLE)
+		//增加判断，如果方向为反向，则将骰子职位负数
+		if gameRoom.Direction == GAME_DIRETION__LEFT{
+			dice = -dice
+		}
 		//掷完骰子后，就自动移动
 		gameRoom.GameUserMove(dice, c)
 		//摇动完骰子，置为可用

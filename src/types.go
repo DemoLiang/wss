@@ -100,7 +100,7 @@ type GameRoom struct {
 	Prision map[*Connection]int
 
 	//移动方向 0 正向 1 反向
-	Direction int
+	Direction GAME_DIRECTION_ENUM
 }
 
 type MapElement struct {
