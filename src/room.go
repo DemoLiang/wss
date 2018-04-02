@@ -32,6 +32,8 @@ func NewGameRoom(number int) (gameRoom *GameRoom) {
 	gameRoom.InitGameMap()
 	//初始化房间状态为可用状态
 	gameRoom.SetRoomStatus(GAMEROOM_STATUS__ENABLE)
+	//初始化chan client pip
+	gameRoom.PipClient = make(chan string ,4)
 	return
 }
 //初始化运气卡

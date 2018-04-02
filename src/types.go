@@ -104,6 +104,8 @@ type GameRoom struct {
 
 	//免付费
 	FreeRentFee map[*Connection]int
+
+	PipClient chan string
 }
 
 type MapElement struct {
