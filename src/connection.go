@@ -1,11 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/DemoLiang/wss/golib"
 	"github.com/gorilla/websocket"
 	"net/http"
-	"encoding/json"
 )
 
 //读取消息进行处理，如果没有登录服务器，用微信code交换服务器code，则关闭链接
@@ -32,7 +32,7 @@ func (c *Connection) WriterHandler() {
 	for message := range c.Send {
 		err := c.Ws.WriteMessage(websocket.TextMessage, message)
 		if err != nil {
-			golib.Log("write message to client error:%v",err.Error())
+			golib.Log("write message to client error:%v", err.Error())
 			break
 		}
 	}
@@ -73,7 +73,7 @@ func (c *Connection) Close() {
 
 //客户端发送消息
 func (c *Connection) SendMessage(data interface{}) (err error) {
-	dataByte,_ := json.Marshal(&data)
+	dataByte, _ := json.Marshal(&data)
 	c.Send <- dataByte
 	return nil
 }

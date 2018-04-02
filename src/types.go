@@ -393,7 +393,7 @@ type MessageNewRuleFilterNO12 struct {
 //纳税消息
 type MessageTax struct {
 	MessageBasicInfo
-	Money int64 `json:"money"`
+	Money      int64 `json:"money"`
 	LandNumber int64 `json:"land_number"`
 }
 
@@ -405,7 +405,7 @@ type MessageLogoutRoom struct {
 //出现
 type MessageError struct {
 	MessageBasicInfo
-	ErrorCode int `json:"error_code"`
+	ErrorCode int    `json:"error_code"`
 	ErrorDesc string `json:"error_desc"`
 }
 

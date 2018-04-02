@@ -83,7 +83,7 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 		//获取房间
 		gameRoom := GetGameRoomById(gameStart.GameRoomId)
 		//判断请求开始游戏的人是谁
-		if c.Session != gameRoom.Homeowner{
+		if c.Session != gameRoom.Homeowner {
 			golib.Log("不是房主，不能开始游戏")
 			return nil
 		}
@@ -99,8 +99,8 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 		//获取房间信息
 		gameRoom := GetGameRoomById(shakeDice.GameRoomId)
 		//TODO 判断用户是否在监狱，如果在监狱，则不允许摇动骰子，如果已经在监狱
-		if value,ok :=gameRoom.Prision[c];ok {
-			if value >0 {
+		if value, ok := gameRoom.Prision[c]; ok {
+			if value > 0 {
 				golib.Log("用户还在监狱，不能摇骰子，不能移动：%v", value)
 				var msgErr MessageError
 				msgErr.GameRoomId = gameRoom.Id
@@ -110,7 +110,7 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 				gameRoom.BroadcastMessage(&msgErr)
 				return
 			}
-		}else {
+		} else {
 			//减暂停回合计数
 			gameRoom.DescPrision(c)
 		}
@@ -123,7 +123,7 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 		gameRoom.Broadcast <- data
 		gameRoom.SetRoomStatus(GAMEROOM_STATUS__DICE_DISAVAILABLE)
 		//增加判断，如果方向为反向，则将骰子职位负数
-		if gameRoom.Direction == GAME_DIRETION__LEFT{
+		if gameRoom.Direction == GAME_DIRETION__LEFT {
 			dice = -dice
 		}
 		//掷完骰子后，就自动移动
@@ -168,18 +168,18 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 	case MESSAGE_TYPE__LOGOUT:
 		//退出房间
 		var logout MessageLogoutRoom
-		json.Unmarshal(data,&logout)
+		json.Unmarshal(data, &logout)
 		room := GetGameRoomById(logout.GameRoomId)
 		room.RoomStatusLock.Lock()
 		defer room.RoomStatusLock.Unlock()
 		//归还地产
-		room.Map.Map = append(room.Map.Map,room.Map.ClientMap[c]...)
+		room.Map.Map = append(room.Map.Map, room.Map.ClientMap[c]...)
 		//归还钱
 		room.Bank += room.Money[c]
 		//广播消息给其它客户端
 		room.BroadcastMessage(&logout)
 	default:
-		golib.Log("default unknown message：%s\n",data)
+		golib.Log("default unknown message：%s\n", data)
 	}
 	return nil
 }

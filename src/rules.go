@@ -22,7 +22,7 @@ func InitRules() {
 		LUCK_CARD_TYPE__NO11: LuckCardsFilterNO11,
 		LUCK_CARD_TYPE__NO12: LuckCardsFilterNO12,
 	}
-	NewsRulesFilter = map[NEWS_CARD_TYPE_ENUM]func(room *GameRoom,c *Connection)(err error){
+	NewsRulesFilter = map[NEWS_CARD_TYPE_ENUM]func(room *GameRoom, c *Connection) (err error){
 		NEWS_CARD_TYPE__NO1:  NewsCardsFilterNO1,
 		NEWS_CARD_TYPE__NO2:  NewsCardsFilterNO2,
 		NEWS_CARD_TYPE__NO3:  NewsCardsFilterNO3,
@@ -37,8 +37,6 @@ func InitRules() {
 		NEWS_CARD_TYPE__NO12: NewsCardsFilterNO12,
 	}
 }
-
-
 
 //运气卡处理函数
 //遗失钱包，你失去300元，位于你后方的第一位玩家获得300元
@@ -186,13 +184,13 @@ func LuckCardsFilterNO7(room *GameRoom, c *Connection) (err error) {
 //FIXME 立即移动到你的左边手玩家的位置，并按该结果结算 需要修改，map不保证顺序性，可以改为数组形式
 func LuckCardsFilterNO8(room *GameRoom, c *Connection) (err error) {
 	var dice int
-	var cPos,conPos Pos
+	var cPos, conPos Pos
 	var cIdx int
 	var cStepFlag bool
 	//找到自己的位置，和右边下一个人的位置
-	for idx,location := range room.Map.CurrentUserLocation{
+	for idx, location := range room.Map.CurrentUserLocation {
 		//先找到 c 的位置
-		if location.C == c{
+		if location.C == c {
 			cPos = location.Pos
 			cIdx = idx
 			break
@@ -200,25 +198,25 @@ func LuckCardsFilterNO8(room *GameRoom, c *Connection) (err error) {
 	}
 	if cIdx < 1 {
 		conPos = room.Map.CurrentUserLocation[cIdx-1].Pos
-	}else {
+	} else {
 		conPos = room.Map.CurrentUserLocation[room.MaxClientNumber-1].Pos
 
 	}
-	for _,data:=range room.Map.Map{
-		if cPos.IsEqual(Pos{LocationX:data.LocationX,LocationY:data.LocationY}){
+	for _, data := range room.Map.Map {
+		if cPos.IsEqual(Pos{LocationX: data.LocationX, LocationY: data.LocationY}) {
 			cStepFlag = true
-		}else {
-			if cStepFlag{
+		} else {
+			if cStepFlag {
 				dice++
 			}
 		}
-		if conPos.IsEqual(Pos{LocationX:data.LocationX,LocationY:data.LocationY}){
+		if conPos.IsEqual(Pos{LocationX: data.LocationX, LocationY: data.LocationY}) {
 			break
 		}
 	}
 
 	//根据计算的step移动
-	room.GameUserMove(dice,c)
+	room.GameUserMove(dice, c)
 
 	return nil
 }
@@ -226,13 +224,13 @@ func LuckCardsFilterNO8(room *GameRoom, c *Connection) (err error) {
 //FIXME 立即移动到你右手边玩家的位置，并按该结果结算 需要修改，map不保证顺序性，可以改为数组形式
 func LuckCardsFilterNO9(room *GameRoom, c *Connection) (err error) {
 	var dice int
-	var cPos,conPos Pos
+	var cPos, conPos Pos
 	var cIdx int
 	var cStepFlag bool
 	//找到自己的位置，和右边下一个人的位置
-	for idx,location := range room.Map.CurrentUserLocation{
+	for idx, location := range room.Map.CurrentUserLocation {
 		//先找到 c 的位置
-		if location.C == c{
+		if location.C == c {
 			cPos = location.Pos
 			cIdx = idx
 			break
@@ -240,25 +238,25 @@ func LuckCardsFilterNO9(room *GameRoom, c *Connection) (err error) {
 	}
 	if cIdx < room.MaxClientNumber-1 {
 		conPos = room.Map.CurrentUserLocation[cIdx+1].Pos
-	}else {
+	} else {
 		conPos = room.Map.CurrentUserLocation[0].Pos
 
 	}
-	for _,data:=range room.Map.Map{
-		if cPos.IsEqual(Pos{LocationX:data.LocationX,LocationY:data.LocationY}){
+	for _, data := range room.Map.Map {
+		if cPos.IsEqual(Pos{LocationX: data.LocationX, LocationY: data.LocationY}) {
 			cStepFlag = true
-		}else {
-			if cStepFlag{
+		} else {
+			if cStepFlag {
 				dice++
 			}
 		}
-		if conPos.IsEqual(Pos{LocationX:data.LocationX,LocationY:data.LocationY}){
+		if conPos.IsEqual(Pos{LocationX: data.LocationX, LocationY: data.LocationY}) {
 			break
 		}
 	}
 
 	//根据计算的step移动
-	room.GameUserMove(dice,c)
+	room.GameUserMove(dice, c)
 
 	return nil
 }
@@ -307,7 +305,7 @@ func LuckCardsFilterNO12(room *GameRoom, c *Connection) (err error) {
 	//广播给房间其它的小伙伴
 	room.Broadcast <- data
 	//增加判断，如果方向为反向，则将骰子职位负数
-	if room.Direction == GAME_DIRETION__LEFT{
+	if room.Direction == GAME_DIRETION__LEFT {
 		dice = -dice
 	}
 	//掷完骰子后，就自动移动
@@ -318,12 +316,12 @@ func LuckCardsFilterNO12(room *GameRoom, c *Connection) (err error) {
 //新闻卡处理函数
 //投资项目分红，距离证券中心最近的玩家获得500元
 func NewsCardsFilterNO1(room *GameRoom, c *Connection) (err error) {
-	var cIndex ,conIndex int
+	var cIndex, conIndex int
 	var stepList map[*Connection]int
 	var minStep int
 	//计算距离证券中心的位置
 	land := room.GetLandByRole(GAME_ROLE__SECURITIES_CENTER)
-	for _,userLocation := range room.Map.CurrentUserLocation {
+	for _, userLocation := range room.Map.CurrentUserLocation {
 		for idx, data := range room.Map.Map {
 			if userLocation.Pos.IsEqual(Pos{LocationX: data.LocationX, LocationY: data.LocationY}) {
 				cIndex = idx
@@ -331,16 +329,16 @@ func NewsCardsFilterNO1(room *GameRoom, c *Connection) (err error) {
 			if land.LocationX == data.LocationX && land.LocationY == data.LocationY && data.Role == GAME_ROLE__SECURITIES_CENTER {
 				conIndex = idx
 			}
-			if minStep >= int(math.Abs(float64(cIndex-conIndex))){
-				minStep = int(math.Abs(float64(cIndex-conIndex)))
+			if minStep >= int(math.Abs(float64(cIndex-conIndex))) {
+				minStep = int(math.Abs(float64(cIndex - conIndex)))
 			}
-			stepList[userLocation.C] = int(math.Abs(float64(cIndex-conIndex)))
+			stepList[userLocation.C] = int(math.Abs(float64(cIndex - conIndex)))
 
 		}
 	}
 	//从银行派钱
-	for c,step := range stepList{
-		if step == minStep{
+	for c, step := range stepList {
+		if step == minStep {
 			room.Money[c] += 500
 			room.Bank -= 500
 		}
@@ -471,7 +469,7 @@ func NewsCardsFilterNO6(room *GameRoom, c *Connection) (err error) {
 //无名慈善家资助，每位玩家可以立即免费赎回一块抵偿
 func NewsCardsFilterNO7(room *GameRoom, c *Connection) (err error) {
 	var groupRedem MessageGroupRedemption
-	for con,data := range room.Map.ClientMap{
+	for con, data := range room.Map.ClientMap {
 		groupRedem.LandList[con.Code] = data
 	}
 	groupRedem.MessageType = MESSAGE_TYPE__GROUP_REDEMPTION
@@ -520,7 +518,7 @@ func NewsCardsFilterNO10(room *GameRoom, c *Connection) (err error) {
 
 //发生灵异事件，在你下次行动结束前，所有玩家都无须支付任何费用
 func NewsCardsFilterNO11(room *GameRoom, c *Connection) (err error) {
-	for con,_ := range room.Connections{
+	for con, _ := range room.Connections {
 		room.FreeRentFee[con] = room.MaxClientNumber
 	}
 	return nil

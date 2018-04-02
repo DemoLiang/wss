@@ -33,15 +33,17 @@ func NewGameRoom(number int) (gameRoom *GameRoom) {
 	//初始化房间状态为可用状态
 	gameRoom.SetRoomStatus(GAMEROOM_STATUS__ENABLE)
 	//初始化chan client pip
-	gameRoom.PipClient = make(chan string ,4)
+	gameRoom.PipClient = make(chan string, 4)
 	return
 }
+
 //初始化运气卡
 func (r *GameRoom) InitLuckCardMap() {
 	for i := int(LUCK_CARD_TYPE__MIN) + 1; i < int(LUCK_CARD_TYPE__MAX); i++ {
 		r.LuckCards[LUCK_CARD_TYPE_ENUM(i)] = true
 	}
 }
+
 //初始化新闻卡
 func (r *GameRoom) InitNewsCardMap() {
 	for i := int(NEWS_CARD_TYPE__MIN) + 1; i < int(NEWS_CARD_TYPE__MAX); i++ {
@@ -119,32 +121,32 @@ func (room *GameRoom) GameUserMove(dice int, c *Connection) (err error) {
 	var userLocationIndex int
 	//var userLocation UserLocationMap
 
-	for idx,data := range room.Map.CurrentUserLocation{
-		if data.C == c{
-			pos = Pos{LocationX:data.LocationX,LocationY:data.LocationY}
+	for idx, data := range room.Map.CurrentUserLocation {
+		if data.C == c {
+			pos = Pos{LocationX: data.LocationX, LocationY: data.LocationY}
 			userLocationIndex = idx
 		}
 	}
 	//获取移动的目标位置点
 	//if pos, ok = room.Map.CurrentUserLocation[c]; ok {
-		idx, _, err := c.GetMapLocation(pos, room)
-		if err != nil {
-			return errors.New("move error")
-		}
-		mapLen := len(room.Map.CurrentUserLocation)
-		//如果已经是再次经过，则跳过起点
-		if idx+dice >= mapLen+1 {
-			dstDice = dice + 1
+	idx, _, err := c.GetMapLocation(pos, room)
+	if err != nil {
+		return errors.New("move error")
+	}
+	mapLen := len(room.Map.CurrentUserLocation)
+	//如果已经是再次经过，则跳过起点
+	if idx+dice >= mapLen+1 {
+		dstDice = dice + 1
 
-			//如果已经再过起点，则再给用户一部分钱
-			room.BankSendMony(c, BANK_SEND_MONY)
-		}
-		//获取移动距离后的点的坐标
-		mapPos := room.Map.Map[idx+dstDice]
+		//如果已经再过起点，则再给用户一部分钱
+		room.BankSendMony(c, BANK_SEND_MONY)
+	}
+	//获取移动距离后的点的坐标
+	mapPos := room.Map.Map[idx+dstDice]
 
-		//更新坐标点位置
-		pos.LocationX = mapPos.LocationX
-		pos.LocationY = mapPos.LocationY
+	//更新坐标点位置
+	pos.LocationX = mapPos.LocationX
+	pos.LocationY = mapPos.LocationY
 	//}
 	//广播移动的目标位置点
 	var userMove MessageGameUserMove
@@ -175,7 +177,7 @@ func (room *GameRoom) GameUserMove(dice int, c *Connection) (err error) {
 }
 
 //广播消息到房间
-func (room *GameRoom)BroadcastMessage(data interface{})(err error)  {
+func (room *GameRoom) BroadcastMessage(data interface{}) (err error) {
 	dataByte, _ := json.Marshal(data)
 	room.Broadcast <- dataByte
 	return nil
@@ -226,7 +228,7 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 						}
 						var land MessageUserLandUpdate
 						tempLand := room.Map.ClientMap[con][index]
-						land.Land = append(land.Land,tempLand)
+						land.Land = append(land.Land, tempLand)
 						land.UpdateFee[&tempLand] = GetLandUpdateFee(tempLand)
 						land.GameRoomId = room.Id
 						land.MessageType = MESSAGE_TYPE__LAND_UPDATE
@@ -304,20 +306,20 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 			case GAME_ROLE__SECURITIES_CENTER:
 				//证券,获得你拥有投资项目数量*500元的奖励
 				var count int = 0
-				for _,land := range room.Map.ClientMap[c]{
-					if land.Role > GAME_ROLE__INVESTMENT_START && land.Role < GAME_ROLE__INVESTMENT_END{
+				for _, land := range room.Map.ClientMap[c] {
+					if land.Role > GAME_ROLE__INVESTMENT_START && land.Role < GAME_ROLE__INVESTMENT_END {
 						count++
 					}
 				}
-				room.Money[c] += int64(count*500)
+				room.Money[c] += int64(count * 500)
 			case GAME_ROLE__PRISION:
 				//监狱
 				room.Prision[c] = room.MaxClientNumber
 			case GAME_ROLE__JAIL:
 				//入狱
 				//TODO 需要移动用户的位置到监狱的位置POS,并暂停一个回合
-				pos := Pos{LocationX:mapLand.LocationX,LocationY:mapLand.LocationY}
-				room.GameUserPosMoveToPos(c,pos)
+				pos := Pos{LocationX: mapLand.LocationX, LocationY: mapLand.LocationY}
+				room.GameUserPosMoveToPos(c, pos)
 				room.Prision[c] = room.MaxClientNumber
 			case GAME_ROLE_PARK:
 				//公园
@@ -333,17 +335,17 @@ func (room *GameRoom) GameDoing(c *Connection) (err error) {
 				//税务
 				var tax MessageTax
 				tax.GameRoomId = room.Id
-				tax.MessageType =MESSAGE_TYPE__PAY_TAXES
+				tax.MessageType = MESSAGE_TYPE__PAY_TAXES
 				tax.Code = c.Code
 				tax.Money = int64(len(room.Map.ClientMap[c]) * 300)
-				room.Money[c] = room.Money[c] - int64(len(room.Map.ClientMap[c]) * 300)
-					room.Bank = room.Bank + room.Money[c] - int64(len(room.Map.ClientMap[c]) * 300)
+				room.Money[c] = room.Money[c] - int64(len(room.Map.ClientMap[c])*300)
+				room.Bank = room.Bank + room.Money[c] - int64(len(room.Map.ClientMap[c])*300)
 
 				//广播给房间其它的小伙伴
 				room.BroadcastMessage(&tax)
 			case GAME_ROLE__NUCLEAR_POWER,
 				//核能发电
-			 	GAME_ROLE__CONSTRUCTION_COMPANY,
+				GAME_ROLE__CONSTRUCTION_COMPANY,
 				//建筑公司
 				GAME_ROLE__CONTINENTAL_TRANSPORTION,
 				//大陆运输
@@ -420,12 +422,12 @@ func (room *GameRoom) LandRedeem(c *Connection, mapList []MapElement) {
 
 //处理运气卡，走到此处说明，说明已经是处理过了，确定了次运气卡还在游戏的堆里，只需要调用过滤函数即可
 func (room *GameRoom) HandlerLuckCards(c *Connection, luckCardNo int) (err error) {
-	return LuckRulesFilter[LUCK_CARD_TYPE_ENUM(luckCardNo)](room,c)
+	return LuckRulesFilter[LUCK_CARD_TYPE_ENUM(luckCardNo)](room, c)
 }
 
 //处理新闻卡
 func (room *GameRoom) HandlerNewsCards(c *Connection, newCardNo int) (err error) {
-	return LuckRulesFilter[LUCK_CARD_TYPE_ENUM(newCardNo)](room,c)
+	return LuckRulesFilter[LUCK_CARD_TYPE_ENUM(newCardNo)](room, c)
 }
 
 //判断游戏是否结束
@@ -474,7 +476,7 @@ func (m MapElement) IsEqual(m1 MapElement) bool {
 }
 
 //获取一块地产的升级费用
-func GetLandUpdateFee(land MapElement)(fee int64){
+func GetLandUpdateFee(land MapElement) (fee int64) {
 	return land.Fee + int64(float64(land.Level)*0.2+float64(land.Level))*land.Fee
 }
 
@@ -490,14 +492,14 @@ func GameRole2MessageType(role GAME_ROLES_ENUM) (msgType MESSAGE_TYPE_ENUM) {
 	case GAME_ROLE__OCEAN_TRANSPORTION:
 		return MESSAGE_TYPE__BUY_LAND
 	}
-	
-	return 
+
+	return
 }
 
 //根据role角色获取map土地元素
-func (room *GameRoom)GetLandByRole(role GAME_ROLES_ENUM)(land *MapElement){
-	for _,land := range room.Map.Map{
-		if land.Role == role{
+func (room *GameRoom) GetLandByRole(role GAME_ROLES_ENUM) (land *MapElement) {
+	for _, land := range room.Map.Map {
+		if land.Role == role {
 			return &land
 		}
 	}
@@ -506,10 +508,10 @@ func (room *GameRoom)GetLandByRole(role GAME_ROLES_ENUM)(land *MapElement){
 }
 
 //变更客户端位置
-func (room *GameRoom)GameUserPosMoveToPos(c *Connection,pos Pos)  (err error){
+func (room *GameRoom) GameUserPosMoveToPos(c *Connection, pos Pos) (err error) {
 	//变更位置
-	for idx,data := range room.Map.CurrentUserLocation{
-		if data.C == c{
+	for idx, data := range room.Map.CurrentUserLocation {
+		if data.C == c {
 			room.Map.CurrentUserLocation[idx].Pos = pos
 		}
 	}
@@ -519,13 +521,13 @@ func (room *GameRoom)GameUserPosMoveToPos(c *Connection,pos Pos)  (err error){
 }
 
 //重新计算监狱停留回合
-func (room *GameRoom)DescPrision(c *Connection)(err error)  {
+func (room *GameRoom) DescPrision(c *Connection) (err error) {
 
-	for con,step := range room.Prision{
-		if step >0 {
+	for con, step := range room.Prision {
+		if step > 0 {
 			room.Prision[con]--
-		}else{
-			delete(room.Prision,con)
+		} else {
+			delete(room.Prision, con)
 		}
 	}
 
@@ -533,9 +535,9 @@ func (room *GameRoom)DescPrision(c *Connection)(err error)  {
 }
 
 //根据用户c 获取房间内的用户的当前位置
-func (room *GameRoom)GetUserLocation(c *Connection)  (location *UserLocationMap){
-	for _,location:= range room.Map.CurrentUserLocation{
-		if location.C == c{
+func (room *GameRoom) GetUserLocation(c *Connection) (location *UserLocationMap) {
+	for _, location := range room.Map.CurrentUserLocation {
+		if location.C == c {
 			return &location
 		}
 	}
@@ -557,7 +559,7 @@ func (r *GameRoom) run() {
 			//初始化钱
 			r.Money[c] = INITIAL_MONEY
 			//初始化位置到起点
-			r.Map.CurrentUserLocation =append(r.Map.CurrentUserLocation ,UserLocationMap{C:c,Pos:Pos{LocationX: r.Map.Map[0].LocationX, LocationY: r.Map.Map[0].LocationY}})
+			r.Map.CurrentUserLocation = append(r.Map.CurrentUserLocation, UserLocationMap{C: c, Pos: Pos{LocationX: r.Map.Map[0].LocationX, LocationY: r.Map.Map[0].LocationY}})
 		case c := <-r.Unregister:
 			if _, ok := r.Connections[c]; ok {
 				r.Connections[c] = false

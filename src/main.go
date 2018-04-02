@@ -11,10 +11,10 @@ import (
 )
 
 var (
-	InitialGameMap GameMap
-	LuckRulesFilter map[LUCK_CARD_TYPE_ENUM]func(room *GameRoom,c *Connection)(err error)
-	NewsRulesFilter map[NEWS_CARD_TYPE_ENUM]func(room *GameRoom,c *Connection)(err error)
-	addr           = flag.String("addr", ":8888", "http service address")
+	InitialGameMap  GameMap
+	LuckRulesFilter map[LUCK_CARD_TYPE_ENUM]func(room *GameRoom, c *Connection) (err error)
+	NewsRulesFilter map[NEWS_CARD_TYPE_ENUM]func(room *GameRoom, c *Connection) (err error)
+	addr            = flag.String("addr", ":8888", "http service address")
 )
 
 func main() {
