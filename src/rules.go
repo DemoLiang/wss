@@ -297,14 +297,26 @@ func LuckCardsFilterNO11(room *GameRoom, c *Connection) (err error) {
 	return nil
 }
 
-//TODO 购买最新款私人坐骑，支付400元，并立即额外进行一回合的行动
+//购买最新款私人坐骑，支付400元，并立即额外进行一回合的行动 FIXME 所有的客户端可以采用chan的形式塞进管道来保证每个客户端的链接顺序
 func LuckCardsFilterNO12(room *GameRoom, c *Connection) (err error) {
-
+	var shakeDice MessageGameShakeDice
+	//摇动骰子
+	dice := ShakeDice()
+	shakeDice.DiceNumber = dice
+	data, _ := json.Marshal(&shakeDice)
+	//广播给房间其它的小伙伴
+	room.Broadcast <- data
+	//增加判断，如果方向为反向，则将骰子职位负数
+	if room.Direction == GAME_DIRETION__LEFT{
+		dice = -dice
+	}
+	//掷完骰子后，就自动移动
+	room.GameUserMove(dice, c)
 	return nil
 }
 
 //新闻卡处理函数
-//TODO 投资项目分红，距离证券中心最近的玩家获得500元
+//投资项目分红，距离证券中心最近的玩家获得500元
 func NewsCardsFilterNO1(room *GameRoom, c *Connection) (err error) {
 	var cIndex ,conIndex int
 	var stepList map[*Connection]int
@@ -501,13 +513,16 @@ func NewsCardsFilterNO9(room *GameRoom, c *Connection) (err error) {
 	return nil
 }
 
-//TODO 百年一遇特大暴雨，所有玩家原地停留一回合
+//百年一遇特大暴雨，所有玩家原地停留一回合
 func NewsCardsFilterNO10(room *GameRoom, c *Connection) (err error) {
 	return nil
 }
 
-//TODO 发生灵异事件，在你下次行动结束前，所有玩家都无须支付任何费用
+//发生灵异事件，在你下次行动结束前，所有玩家都无须支付任何费用
 func NewsCardsFilterNO11(room *GameRoom, c *Connection) (err error) {
+	for con,_ := range room.Connections{
+		room.FreeRentFee[con] = room.MaxClientNumber
+	}
 	return nil
 }
 

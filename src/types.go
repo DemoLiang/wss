@@ -101,6 +101,9 @@ type GameRoom struct {
 
 	//移动方向 0 正向 1 反向
 	Direction GAME_DIRECTION_ENUM
+
+	//免付费
+	FreeRentFee map[*Connection]int
 }
 
 type MapElement struct {
