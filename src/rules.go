@@ -456,12 +456,21 @@ func NewsCardsFilterNO6(room *GameRoom, c *Connection) (err error) {
 	return nil
 }
 
-//TODO 无名慈善家资助，每位玩家可以立即免费赎回一块抵偿
+//无名慈善家资助，每位玩家可以立即免费赎回一块抵偿
 func NewsCardsFilterNO7(room *GameRoom, c *Connection) (err error) {
+	var groupRedem MessageGroupRedemption
+	for con,data := range room.Map.ClientMap{
+		groupRedem.LandList[con.Code] = data
+	}
+	groupRedem.MessageType = MESSAGE_TYPE__GROUP_REDEMPTION
+	groupRedem.GameRoomId = room.Id
+
+	room.BroadcastMessage(&groupRedem)
+
 	return nil
 }
 
-//TODO 全体玩家参加狂欢节，在你下次行动结束前，所有玩家移动移动时都变为后退
+//全体玩家参加狂欢节，在你下次行动结束前，所有玩家移动移动时都变为后退
 func NewsCardsFilterNO8(room *GameRoom, c *Connection) (err error) {
 	room.Direction = GAME_DIRETION__LEFT
 	return nil

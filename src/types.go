@@ -403,3 +403,9 @@ type MessageError struct {
 	ErrorCode int `json:"error_code"`
 	ErrorDesc string `json:"error_desc"`
 }
+
+//群发集体赎回地产
+type MessageGroupRedemption struct {
+	MessageBasicInfo
+	LandList map[string][]MapElement
+}

@@ -48,6 +48,8 @@ const (
 	MESSAGE_TYPE__LOGOUT
 	//错误消息
 	MESSAGE_TYPE__ERROR
+	//群发赎回地产消息
+	MESSAGE_TYPE__GROUP_REDEMPTION
 )
 
 //运气卡消息
