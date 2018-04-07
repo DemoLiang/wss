@@ -114,18 +114,18 @@ func (c *Connection) HandlerMessage(data []byte) (err error) {
 			//减暂停回合计数
 			gameRoom.DescPrision(c)
 		}
-		//TODO 如果是此时的规则为后退，则把骰子置为负数，则往后退
+		//如果是此时的规则为后退，则把骰子置为负数，则往后退
 		//摇动骰子
 		dice := ShakeDice()
+		//增加判断，如果方向为反向，则将骰子职位负数
+		if gameRoom.Direction == GAME_DIRETION__LEFT {
+			dice = -dice
+		}
 		shakeDice.DiceNumber = dice
 		data, _ := json.Marshal(&shakeDice)
 		//广播给房间其它的小伙伴
 		gameRoom.Broadcast <- data
 		gameRoom.SetRoomStatus(GAMEROOM_STATUS__DICE_DISAVAILABLE)
-		//增加判断，如果方向为反向，则将骰子职位负数
-		if gameRoom.Direction == GAME_DIRETION__LEFT {
-			dice = -dice
-		}
 		//掷完骰子后，就自动移动
 		gameRoom.GameUserMove(dice, c)
 		//摇动完骰子，置为可用
