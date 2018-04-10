@@ -35,6 +35,31 @@ export default class Main {
     this.bindLoop = this.loop.bind(this)
     this.hasEventBind = false
 
+    wx.connectSocket({
+      url: 'ws://127.0.0.1:8888/ws',
+      method: "POST",
+      success: res => {
+        console.log("aaaaaaaaaaaa")
+      }
+    })
+    wx.onSocketOpen(function (res) {
+      console.log('WebSocket连接已打开！')
+      // var that = this;
+      wx.login({
+        success: res => {
+          if (res.code) {
+            //发起网络请求
+            // app.globalData.code = res.code
+            console.log("code:"+res.code)
+          } else {
+            console.log('获取用户登录态失败！' + res.errMsg)
+          }
+        }
+      });
+      wx.onSocketMessage(function (res) {
+        console.log('收到服务器内容：' + res.data)
+      })
+    })
     // 清除上一局的动画
     window.cancelAnimationFrame(this.aniId);
 
