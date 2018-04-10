@@ -91,7 +91,7 @@ Page({
     wx.onSocketMessage(function(res){
       console.log('收到服务器内容：' + res.data)
       that.setData({
-        sssssss: res.data.Session,
+        sssssss:res.data.Session,
       })
     })
   },

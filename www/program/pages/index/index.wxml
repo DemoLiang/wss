@@ -8,9 +8,6 @@
       <text class="userinfo-nickname">{{userInfo.language}}</text>
     </block>
   </view>
-  <view class="usermotto">
-    <text class="user-motto">{{motto}}</text>
-  </view>
   <view>
   <view class="section">
   <form bindsubmit="bindFormSubmit">
