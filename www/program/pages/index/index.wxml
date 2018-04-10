@@ -12,15 +12,6 @@
     <text class="user-motto">{{motto}}</text>
   </view>
   <view>
-  <!-- <div>
-  <view class="formcontrol">
-    <textarea id="sendbox" type="text" class="form-control" style="height:200px;width:200px;word-break:break-all"></textarea>
-  </view>
-  <view class="btsend">
-    <button bindtap="sendWsData" id="sendbtn" type="button" class="btn btn-default">发送
-  </button>
-  </view>
-  </div> -->
   <view class="section">
   <form bindsubmit="bindFormSubmit">
     <label style='margin: left;display:flex; '>type:
@@ -30,7 +21,10 @@
       <input type='text' class='roomid' name='roomid'></input>
     </label>
      <label style='display:flex;'>code:
-      <input type='text' class='code' name='code'></input>
+      <text class='code' name='code'>{{code}}</text>
+    </label>
+      <label style='display:flex;'>session:
+      <text class='session' name='session'>{{sssssss}}</text>
     </label>
      <label style='display:flex;'>land:
       <input type='text' class='land' name='land' style=' border-style: solid;  color: #ff0000'></input>
