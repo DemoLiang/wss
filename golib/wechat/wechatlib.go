@@ -12,8 +12,8 @@ import (
 
 const (
 	WECHAT_HOST = "https://api.weixin.qq.com"
-	APPID       = "wxb451d970d83674d0"
-	SECRET      = "ec9d8780978119c0f52ca4a04fb5bd69"
+	APPID       = ""
+	SECRET      = ""
 )
 
 const (
