@@ -3,11 +3,12 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"github.com/DemoLiang/wss/golib"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/DemoLiang/wss/golib"
 )
 
 var (
